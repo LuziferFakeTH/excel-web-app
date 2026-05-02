@@ -275,6 +275,23 @@ def all_files():
     conn.close()
 
     return render_template("files.html", files=files)
+
+@app.route("/view_file/<int:file_id>")
+def view_file(file_id):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT col_A, col_B, col_C, col_D, col_E,
+               col_F, col_G, col_H, col_I, col_J, col_K
+        FROM data_rows
+        WHERE file_id = %s
+    """, (file_id,))
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return render_template("view_file.html", rows=rows)
 # ---------------------------
 # RUN SERVER
 # ---------------------------
