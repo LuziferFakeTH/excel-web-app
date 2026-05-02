@@ -1,14 +1,21 @@
 from flask import Flask, request, render_template
 import pandas as pd
-import sqlite3
-from datetime import datetime
-import os
 import psycopg2
+import os
+from datetime import datetime
 
+app = Flask(__name__)
+
+# ---------------------------
+# CONNECT DATABASE (PostgreSQL)
+# ---------------------------
 def get_db():
     DATABASE_URL = os.environ.get("DATABASE_URL")
     return psycopg2.connect(DATABASE_URL)
-    
+
+# ---------------------------
+# CREATE TABLE (AUTO)
+# ---------------------------
 def init_db():
     conn = get_db()
     cursor = conn.cursor()
@@ -45,23 +52,27 @@ def init_db():
     conn.close()
 
 init_db()
-app = Flask(__name__)
 
-
-
-# หน้าแรก
+# ---------------------------
+# HOME
+# ---------------------------
 @app.route("/")
 def index():
     return render_template("index.html", results=None)
 
-# อัปโหลดไฟล์
+# ---------------------------
+# UPLOAD
+# ---------------------------
 @app.route("/upload", methods=["POST"])
 def upload():
     file = request.files["file"]
     customer = request.form["customer"]
     game = request.form["game"]
 
-    df = pd.read_excel(file)
+    try:
+        df = pd.read_excel(file)
+    except Exception as e:
+        return f"อ่านไฟล์ไม่ได้: {str(e)}"
 
     conn = get_db()
     cursor = conn.cursor()
@@ -69,13 +80,16 @@ def upload():
     upload_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     file_label = f"{customer} > {game} > {upload_date}"
 
+    # insert files
     cursor.execute("""
         INSERT INTO files (customer, game, file_label, upload_date)
-        VALUES (?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s)
+        RETURNING id
     """, (customer, game, file_label, upload_date))
 
-    file_id = cursor.lastrowid
+    file_id = cursor.fetchone()[0]
 
+    # อ่าน A-K (ข้าม header)
     df_data = df.iloc[1:, 0:11].fillna("")
 
     for _, row in df_data.iterrows():
@@ -84,7 +98,7 @@ def upload():
                 file_id, col_A, col_B, col_C, col_D, col_E,
                 col_F, col_G, col_H, col_I, col_J, col_K
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             file_id,
             str(row.iloc[0]),
@@ -105,7 +119,9 @@ def upload():
 
     return "Upload สำเร็จ <a href='/'>กลับ</a>"
 
-# ค้นหา
+# ---------------------------
+# SEARCH
+# ---------------------------
 @app.route("/search")
 def search():
     keyword = request.args.get("q")
@@ -116,23 +132,23 @@ def search():
     cursor.execute("""
         SELECT 
             data_rows.id,
-            files.customer, 
-            files.game, 
+            files.customer,
+            files.game,
             files.upload_date,
             data_rows.col_B
         FROM data_rows
         JOIN files ON data_rows.file_id = files.id
-        WHERE col_A LIKE ?
-           OR col_B LIKE ?
-           OR col_C LIKE ?
-           OR col_D LIKE ?
-           OR col_E LIKE ?
-           OR col_F LIKE ?
-           OR col_G LIKE ?
-           OR col_H LIKE ?
-           OR col_I LIKE ?
-           OR col_J LIKE ?
-           OR col_K LIKE ?
+        WHERE col_A ILIKE %s
+           OR col_B ILIKE %s
+           OR col_C ILIKE %s
+           OR col_D ILIKE %s
+           OR col_E ILIKE %s
+           OR col_F ILIKE %s
+           OR col_G ILIKE %s
+           OR col_H ILIKE %s
+           OR col_I ILIKE %s
+           OR col_J ILIKE %s
+           OR col_K ILIKE %s
     """, tuple([f"%{keyword}%"] * 11))
 
     results = cursor.fetchall()
@@ -140,7 +156,9 @@ def search():
 
     return render_template("index.html", results=results)
 
-# ดูรายละเอียด
+# ---------------------------
+# DETAIL
+# ---------------------------
 @app.route("/detail/<int:row_id>")
 def detail(row_id):
     conn = get_db()
@@ -150,7 +168,7 @@ def detail(row_id):
         SELECT col_A, col_B, col_C, col_D, col_E,
                col_F, col_G, col_H, col_I, col_J, col_K
         FROM data_rows
-        WHERE id = ?
+        WHERE id = %s
     """, (row_id,))
 
     row = cursor.fetchone()
@@ -158,7 +176,9 @@ def detail(row_id):
 
     return render_template("detail.html", row=row, row_id=row_id)
 
-# อัปเดตข้อมูล
+# ---------------------------
+# UPDATE
+# ---------------------------
 @app.route("/update/<int:row_id>", methods=["POST"])
 def update(row_id):
     conn = get_db()
@@ -168,9 +188,9 @@ def update(row_id):
 
     cursor.execute("""
         UPDATE data_rows SET
-            col_A=?, col_B=?, col_C=?, col_D=?, col_E=?,
-            col_F=?, col_G=?, col_H=?, col_I=?, col_J=?, col_K=?
-        WHERE id=?
+            col_A=%s, col_B=%s, col_C=%s, col_D=%s, col_E=%s,
+            col_F=%s, col_G=%s, col_H=%s, col_I=%s, col_J=%s, col_K=%s
+        WHERE id=%s
     """, (*values, row_id))
 
     conn.commit()
@@ -178,5 +198,9 @@ def update(row_id):
 
     return "อัปเดตสำเร็จ <a href='/'>กลับ</a>"
 
+# ---------------------------
+# RUN SERVER
+# ---------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
