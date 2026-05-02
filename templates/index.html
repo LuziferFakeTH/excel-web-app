@@ -98,18 +98,28 @@
                 <tbody>
                     {% for r in results %}
                     <tr>
-                        <td>{{ r[1] }}</td>
-                        <td>{{ r[2] }}</td>
-                        <td>{{ r[3] }}</td>
-                        <td>{{ r[4] }}</td>
+                        <td>{{ r[2] }}</td> <!-- customer -->
+                        <td>{{ r[3] }}</td> <!-- game -->
+                        <td>{{ r[4] }}</td> <!-- date -->
+                        <td>{{ r[5] }}</td> <!-- pack -->
+
                         <td>
-                            <a href="/detail/{{ r[0] }}" class="btn btn-sm btn-warning">
+                            <!-- แก้ไข -->
+                            <a href="/detail/{{ r[1] }}" class="btn btn-sm btn-warning">
                                 ✏️ แก้ไข
+                            </a>
+
+                            <!-- ลบ -->
+                            <a href="/delete_file/{{ r[0] }}"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('ลบไฟล์นี้ทั้งหมด?')">
+                               🗑️ ลบ
                             </a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
+
             </table>
         </div>
     </div>
