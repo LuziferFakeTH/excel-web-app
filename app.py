@@ -2,11 +2,50 @@ from flask import Flask, request, render_template
 import pandas as pd
 import sqlite3
 from datetime import datetime
+import os
+import psycopg2
 
+def init_db():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS files (
+        id SERIAL PRIMARY KEY,
+        customer TEXT,
+        game TEXT,
+        file_label TEXT,
+        upload_date TEXT
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS data_rows (
+        id SERIAL PRIMARY KEY,
+        file_id INTEGER,
+        col_A TEXT,
+        col_B TEXT,
+        col_C TEXT,
+        col_D TEXT,
+        col_E TEXT,
+        col_F TEXT,
+        col_G TEXT,
+        col_H TEXT,
+        col_I TEXT,
+        col_J TEXT,
+        col_K TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+init_db()
 app = Flask(__name__)
 
 def get_db():
-    return sqlite3.connect("data.db")
+    DATABASE_URL = os.environ.get("DATABASE_URL")
+    return psycopg2.connect(DATABASE_URL)
 
 # หน้าแรก
 @app.route("/")
