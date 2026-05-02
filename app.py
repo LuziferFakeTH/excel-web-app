@@ -2,7 +2,7 @@ from flask import Flask, request, render_template
 import pandas as pd
 import psycopg2
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 app = Flask(__name__)
@@ -133,6 +133,40 @@ def upload():
 
     return "Upload สำเร็จ <a href='/'>กลับ</a>"
 
+from datetime import datetime, timedelta
+import pytz
+
+def delete_old_files():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    thai_tz = pytz.timezone("Asia/Bangkok")
+    now = datetime.now(thai_tz)
+
+    # 100 วันก่อน
+    cutoff_date = now - timedelta(days=100)
+    cutoff_str = cutoff_date.strftime("%Y-%m-%d %H:%M:%S")
+
+    # หา file_id ที่เก่าเกิน 100 วัน
+    cursor.execute("""
+        SELECT id FROM files
+        WHERE upload_date < %s
+    """, (cutoff_str,))
+
+    old_ids = cursor.fetchall()
+
+    for row in old_ids:
+        file_id = row[0]
+
+        # ลบข้อมูลย่อยก่อน
+        cursor.execute("DELETE FROM data_rows WHERE file_id = %s", (file_id,))
+
+        # ลบไฟล์หลัก
+        cursor.execute("DELETE FROM files WHERE id = %s", (file_id,))
+
+    conn.commit()
+    conn.close()
+
 # ---------------------------
 # SEARCH
 # ---------------------------
@@ -225,6 +259,22 @@ def delete_file(file_id):
     conn.close()
 
     return "<script>alert('ลบสำเร็จ'); window.location.href='/'</script>"
+
+@app.route("/files")
+def all_files():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, customer, game, upload_date
+        FROM files
+        ORDER BY id DESC
+    """)
+
+    files = cursor.fetchall()
+    conn.close()
+
+    return render_template("files.html", files=files)
 # ---------------------------
 # RUN SERVER
 # ---------------------------
