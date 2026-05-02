@@ -1,0 +1,141 @@
+from flask import Flask, request, render_template
+import pandas as pd
+import sqlite3
+from datetime import datetime
+
+app = Flask(__name__)
+
+def get_db():
+    return sqlite3.connect("data.db")
+
+# หน้าแรก
+@app.route("/")
+def index():
+    return render_template("index.html", results=None)
+
+# อัปโหลดไฟล์
+@app.route("/upload", methods=["POST"])
+def upload():
+    file = request.files["file"]
+    customer = request.form["customer"]
+    game = request.form["game"]
+
+    df = pd.read_excel(file)
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    upload_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    file_label = f"{customer} > {game} > {upload_date}"
+
+    cursor.execute("""
+        INSERT INTO files (customer, game, file_label, upload_date)
+        VALUES (?, ?, ?, ?)
+    """, (customer, game, file_label, upload_date))
+
+    file_id = cursor.lastrowid
+
+    df_data = df.iloc[1:, 0:11].fillna("")
+
+    for _, row in df_data.iterrows():
+        cursor.execute("""
+            INSERT INTO data_rows (
+                file_id, col_A, col_B, col_C, col_D, col_E,
+                col_F, col_G, col_H, col_I, col_J, col_K
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            file_id,
+            str(row.iloc[0]),
+            str(row.iloc[1]),
+            str(row.iloc[2]),
+            str(row.iloc[3]),
+            str(row.iloc[4]),
+            str(row.iloc[5]),
+            str(row.iloc[6]),
+            str(row.iloc[7]),
+            str(row.iloc[8]),
+            str(row.iloc[9]),
+            str(row.iloc[10])
+        ))
+
+    conn.commit()
+    conn.close()
+
+    return "Upload สำเร็จ <a href='/'>กลับ</a>"
+
+# ค้นหา
+@app.route("/search")
+def search():
+    keyword = request.args.get("q")
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT 
+            data_rows.id,
+            files.customer, 
+            files.game, 
+            files.upload_date,
+            data_rows.col_B
+        FROM data_rows
+        JOIN files ON data_rows.file_id = files.id
+        WHERE col_A LIKE ?
+           OR col_B LIKE ?
+           OR col_C LIKE ?
+           OR col_D LIKE ?
+           OR col_E LIKE ?
+           OR col_F LIKE ?
+           OR col_G LIKE ?
+           OR col_H LIKE ?
+           OR col_I LIKE ?
+           OR col_J LIKE ?
+           OR col_K LIKE ?
+    """, tuple([f"%{keyword}%"] * 11))
+
+    results = cursor.fetchall()
+    conn.close()
+
+    return render_template("index.html", results=results)
+
+# ดูรายละเอียด
+@app.route("/detail/<int:row_id>")
+def detail(row_id):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT col_A, col_B, col_C, col_D, col_E,
+               col_F, col_G, col_H, col_I, col_J, col_K
+        FROM data_rows
+        WHERE id = ?
+    """, (row_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    return render_template("detail.html", row=row, row_id=row_id)
+
+# อัปเดตข้อมูล
+@app.route("/update/<int:row_id>", methods=["POST"])
+def update(row_id):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    values = [request.form[f"col{i}"] for i in range(11)]
+
+    cursor.execute("""
+        UPDATE data_rows SET
+            col_A=?, col_B=?, col_C=?, col_D=?, col_E=?,
+            col_F=?, col_G=?, col_H=?, col_I=?, col_J=?, col_K=?
+        WHERE id=?
+    """, (*values, row_id))
+
+    conn.commit()
+    conn.close()
+
+    return "อัปเดตสำเร็จ <a href='/'>กลับ</a>"
+
+if __name__ == "__main__":
+    app.run(debug=True)
