@@ -5,6 +5,10 @@ from datetime import datetime
 import os
 import psycopg2
 
+def get_db():
+    DATABASE_URL = os.environ.get("DATABASE_URL")
+    return psycopg2.connect(DATABASE_URL)
+    
 def init_db():
     conn = get_db()
     cursor = conn.cursor()
@@ -43,9 +47,7 @@ def init_db():
 init_db()
 app = Flask(__name__)
 
-def get_db():
-    DATABASE_URL = os.environ.get("DATABASE_URL")
-    return psycopg2.connect(DATABASE_URL)
+
 
 # หน้าแรก
 @app.route("/")
