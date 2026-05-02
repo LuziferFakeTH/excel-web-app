@@ -66,7 +66,7 @@ def index():
     return render_template("index.html", results=None)
 
 # ---------------------------
-# UPLOAD
+# 
 # ---------------------------
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -75,18 +75,28 @@ def upload():
     game = request.form["game"]
 
     try:
+        # อ่าน Excel (Row1 = header)
         df = pd.read_excel(file)
+
+        # เอาเฉพาะ A-K และไม่ข้ามแถวแล้ว
+        df_data = df.iloc[:, 0:11].fillna("")
+
     except Exception as e:
         return f"อ่านไฟล์ไม่ได้: {str(e)}"
 
     conn = get_db()
     cursor = conn.cursor()
 
+    # เวลาไทย
+    from datetime import datetime
+    import pytz
+
     thai_tz = pytz.timezone("Asia/Bangkok")
     upload_date = datetime.now(thai_tz).strftime("%Y-%m-%d %H:%M:%S")
+
     file_label = f"{customer} > {game} > {upload_date}"
 
-    # insert files
+    # insert file
     cursor.execute("""
         INSERT INTO files (customer, game, file_label, upload_date)
         VALUES (%s, %s, %s, %s)
@@ -95,9 +105,7 @@ def upload():
 
     file_id = cursor.fetchone()[0]
 
-    # อ่าน A-K (ข้าม header)
-    df_data = df.iloc[1:, 0:11].fillna("")
-
+    # insert data
     for _, row in df_data.iterrows():
         cursor.execute("""
             INSERT INTO data_rows (
