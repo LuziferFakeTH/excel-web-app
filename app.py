@@ -3,6 +3,7 @@ import pandas as pd
 import psycopg2
 import os
 from datetime import datetime
+import pytz
 
 app = Flask(__name__)
 
@@ -81,7 +82,8 @@ def upload():
     conn = get_db()
     cursor = conn.cursor()
 
-    upload_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    thai_tz = pytz.timezone("Asia/Bangkok")
+    upload_date = datetime.now(thai_tz).strftime("%Y-%m-%d %H:%M:%S")
     file_label = f"{customer} > {game} > {upload_date}"
 
     # insert files
