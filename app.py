@@ -136,26 +136,27 @@ def search():
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT 
-            data_rows.id,
-            files.customer,
-            files.game,
-            files.upload_date,
-            data_rows.col_B
-        FROM data_rows
-        JOIN files ON data_rows.file_id = files.id
-        WHERE col_A ILIKE %s
-           OR col_B ILIKE %s
-           OR col_C ILIKE %s
-           OR col_D ILIKE %s
-           OR col_E ILIKE %s
-           OR col_F ILIKE %s
-           OR col_G ILIKE %s
-           OR col_H ILIKE %s
-           OR col_I ILIKE %s
-           OR col_J ILIKE %s
-           OR col_K ILIKE %s
-    """, tuple([f"%{keyword}%"] * 11))
+    SELECT 
+        files.id,          -- 👈 file_id (ใช้ลบ)
+        data_rows.id,      -- 👈 row_id (ใช้แก้ไข)
+        files.customer,
+        files.game,
+        files.upload_date,
+        data_rows.col_B
+    FROM data_rows
+    JOIN files ON data_rows.file_id = files.id
+    WHERE col_A ILIKE %s
+       OR col_B ILIKE %s
+       OR col_C ILIKE %s
+       OR col_D ILIKE %s
+       OR col_E ILIKE %s
+       OR col_F ILIKE %s
+       OR col_G ILIKE %s
+       OR col_H ILIKE %s
+       OR col_I ILIKE %s
+       OR col_J ILIKE %s
+       OR col_K ILIKE %s
+""", tuple([f"%{keyword}%"] * 11))
 
     results = cursor.fetchall()
     conn.close()
