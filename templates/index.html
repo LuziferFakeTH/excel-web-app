@@ -209,6 +209,32 @@ document.addEventListener("DOMContentLoaded", function () {
     </button>
 </div>
 
+<script>
+function runVacuum() {
+
+    let pass = prompt("🔒 ใส่รหัสก่อนล้าง Storage:");
+
+    if (pass !== "1234") {
+        alert("❌ รหัสไม่ถูกต้อง");
+        return;
+    }
+
+    let confirmAction = confirm("⚠️ ระบบจะหยุดชั่วคราว\nยืนยันหรือไม่?");
+
+    if (!confirmAction) return;
+
+    fetch("/vacuum")
+        .then(res => res.text())
+        .then(data => {
+            alert(data);
+            location.reload();
+        })
+        .catch(err => {
+            alert("❌ เกิดข้อผิดพลาด");
+        });
+}
+</script>
+
 
 <div class="container mt-5">
 
