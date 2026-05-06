@@ -363,7 +363,7 @@ def view_file(file_id):
 def vacuum():
     password = request.args.get("pass")
 
-    if password != "1234":
+    if password != "081041":
         return "❌ Unauthorized"
 
     try:
