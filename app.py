@@ -4,6 +4,7 @@ from db import get_db
 from utils import get_storage_info
 from datetime import datetime
 import pytz
+import re
 
 app = Flask(__name__)
 
@@ -106,6 +107,9 @@ def upload():
 def search():
     keyword = request.args.get("q", "").strip()
 
+    # 🔥 แปลง keyword ให้ clean
+    keyword = re.sub(r'[^a-zA-Z0-9 ]', ' ', keyword)
+
     if not keyword:
         return render_template("index.html", results=[])
 
@@ -123,7 +127,6 @@ def search():
     FROM data_rows
     JOIN files ON data_rows.file_id = files.id
     WHERE search_vector @@ plainto_tsquery('simple', %s)
-    ORDER BY data_rows.id DESC
     LIMIT 100
     """, (keyword,))
 
@@ -413,3 +416,35 @@ def check_column():
     conn.close()
 
     return "<br>".join([c[0] for c in cols])
+
+@app.route("/check_fill")
+def check_fill():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT COUNT(*) FROM data_rows
+    WHERE search_vector IS NULL
+    """)
+
+    count = cursor.fetchone()[0]
+    conn.close()
+
+    return f"เหลือ {count} แถวที่ยังไม่ fill"
+
+
+@app.route("/debug_search")
+def debug_search():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT col_A, search_vector
+    FROM data_rows
+    LIMIT 5
+    """)
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return "<br><br>".join([str(r) for r in rows])
