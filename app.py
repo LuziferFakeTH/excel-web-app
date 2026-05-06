@@ -1,45 +1,21 @@
 from flask import Flask, request, render_template
 import pandas as pd
-import psycopg2
-import os
-from datetime import datetime, timedelta
+from db import get_db
+from utils import get_storage_info
+from datetime import datetime
 import pytz
 
 app = Flask(__name__)
 
-def get_storage_info():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT pg_database_size(current_database());")
-    used_bytes = cursor.fetchone()[0]
-
-    conn.close()
-
-    # PostgreSQL free plan สมมติ 1GB
-    total_bytes = 1024 * 1024 * 1024
-
-    remaining_bytes = total_bytes - used_bytes
-    percent_used = (used_bytes / total_bytes) * 100
-
-    return {
-        "used_kb": round(used_bytes / 1024, 2),
-        "remaining_kb": round(remaining_bytes / 1024, 2),
-        "percent_used": round(percent_used, 2)
-    }
 # ---------------------------
-# CONNECT DATABASE (PostgreSQL)
+# GLOBAL STORAGE (แก้ปัญหา undefined)
 # ---------------------------
-def get_db():
-    DATABASE_URL = os.environ.get("DATABASE_URL")
-
-    if not DATABASE_URL:
-        raise Exception("❌ DATABASE_URL not set in environment")
-
-    return psycopg2.connect(DATABASE_URL)
+@app.context_processor
+def inject_storage():
+    return dict(storage=get_storage_info())
 
 # ---------------------------
-# CREATE TABLE (AUTO)
+# INIT DB
 # ---------------------------
 def init_db():
     conn = get_db()
@@ -83,11 +59,10 @@ init_db()
 # ---------------------------
 @app.route("/")
 def index():
-    storage = get_storage_info()
-    return render_template("index.html", storage=storage)
+    return render_template("index.html")
 
 # ---------------------------
-# 
+# UPLOAD
 # ---------------------------
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -95,29 +70,17 @@ def upload():
     customer = request.form["customer"]
     game = request.form["game"]
 
-    try:
-        # อ่าน Excel (Row1 = header)
-        df = pd.read_excel(file)
-
-        # เอาเฉพาะ A-K และไม่ข้ามแถวแล้ว
-        df_data = df.iloc[:, 0:11].fillna("")
-
-    except Exception as e:
-        return f"อ่านไฟล์ไม่ได้: {str(e)}"
+    df = pd.read_excel(file)
+    df_data = df.iloc[:, 0:11].fillna("")
 
     conn = get_db()
     cursor = conn.cursor()
-
-    # เวลาไทย
-    from datetime import datetime
-    import pytz
 
     thai_tz = pytz.timezone("Asia/Bangkok")
     upload_date = datetime.now(thai_tz).strftime("%Y-%m-%d %H:%M:%S")
 
     file_label = f"{customer} > {game} > {upload_date}"
 
-    # insert file
     cursor.execute("""
         INSERT INTO files (customer, game, file_label, upload_date)
         VALUES (%s, %s, %s, %s)
@@ -126,67 +89,15 @@ def upload():
 
     file_id = cursor.fetchone()[0]
 
-    # insert data
     for _, row in df_data.iterrows():
         cursor.execute("""
-            INSERT INTO data_rows (
-                file_id, col_A, col_B, col_C, col_D, col_E,
-                col_F, col_G, col_H, col_I, col_J, col_K
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            file_id,
-            str(row.iloc[0]),
-            str(row.iloc[1]),
-            str(row.iloc[2]),
-            str(row.iloc[3]),
-            str(row.iloc[4]),
-            str(row.iloc[5]),
-            str(row.iloc[6]),
-            str(row.iloc[7]),
-            str(row.iloc[8]),
-            str(row.iloc[9]),
-            str(row.iloc[10])
-        ))
+            INSERT INTO data_rows VALUES (DEFAULT,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        """, (file_id, *[str(x) for x in row]))
 
     conn.commit()
     conn.close()
 
     return "Upload สำเร็จ <a href='/'>กลับ</a>"
-
-from datetime import datetime, timedelta
-import pytz
-
-def delete_old_files():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    thai_tz = pytz.timezone("Asia/Bangkok")
-    now = datetime.now(thai_tz)
-
-    # 100 วันก่อน
-    cutoff_date = now - timedelta(days=100)
-    cutoff_str = cutoff_date.strftime("%Y-%m-%d %H:%M:%S")
-
-    # หา file_id ที่เก่าเกิน 100 วัน
-    cursor.execute("""
-        SELECT id FROM files
-        WHERE upload_date < %s
-    """, (cutoff_str,))
-
-    old_ids = cursor.fetchall()
-
-    for row in old_ids:
-        file_id = row[0]
-
-        # ลบข้อมูลย่อยก่อน
-        cursor.execute("DELETE FROM data_rows WHERE file_id = %s", (file_id,))
-
-        # ลบไฟล์หลัก
-        cursor.execute("DELETE FROM files WHERE id = %s", (file_id,))
-
-    conn.commit()
-    conn.close()
 
 # ---------------------------
 # SEARCH
@@ -199,76 +110,24 @@ def search():
     cursor = conn.cursor()
 
     cursor.execute("""
-    SELECT 
-        files.id,          -- 👈 file_id (ใช้ลบ)
-        data_rows.id,      -- 👈 row_id (ใช้แก้ไข)
-        files.customer,
-        files.game,
-        files.upload_date,
-        data_rows.col_B
+    SELECT files.id, data_rows.id, files.customer, files.game,
+           files.upload_date, data_rows.col_B
     FROM data_rows
     JOIN files ON data_rows.file_id = files.id
-    WHERE col_A ILIKE %s
-       OR col_B ILIKE %s
-       OR col_C ILIKE %s
-       OR col_D ILIKE %s
-       OR col_E ILIKE %s
-       OR col_F ILIKE %s
-       OR col_G ILIKE %s
-       OR col_H ILIKE %s
-       OR col_I ILIKE %s
-       OR col_J ILIKE %s
-       OR col_K ILIKE %s
-""", tuple([f"%{keyword}%"] * 11))
+    WHERE col_A ILIKE %s OR col_B ILIKE %s OR col_C ILIKE %s
+       OR col_D ILIKE %s OR col_E ILIKE %s OR col_F ILIKE %s
+       OR col_G ILIKE %s OR col_H ILIKE %s OR col_I ILIKE %s
+       OR col_J ILIKE %s OR col_K ILIKE %s
+    """, tuple([f"%{keyword}%"] * 11))
 
     results = cursor.fetchall()
     conn.close()
-    storage = get_storage_info()
 
-    return render_template("index.html", results=results, storage=storage)
-
-# ---------------------------
-# DETAIL
-# ---------------------------
-@app.route("/detail/<int:row_id>")
-def detail(row_id):
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT col_A, col_B, col_C, col_D, col_E,
-               col_F, col_G, col_H, col_I, col_J, col_K
-        FROM data_rows
-        WHERE id = %s
-    """, (row_id,))
-
-    row = cursor.fetchone()
-    conn.close()
-
-    return render_template("detail.html", row=row, row_id=row_id)
+    return render_template("index.html", results=results)
 
 # ---------------------------
-# UPDATE
+# DELETE FILE
 # ---------------------------
-@app.route("/update/<int:row_id>", methods=["POST"])
-def update(row_id):
-    conn = get_db()
-    cursor = conn.cursor()
-
-    values = [request.form[f"col{i}"] for i in range(11)]
-
-    cursor.execute("""
-        UPDATE data_rows SET
-            col_A=%s, col_B=%s, col_C=%s, col_D=%s, col_E=%s,
-            col_F=%s, col_G=%s, col_H=%s, col_I=%s, col_J=%s, col_K=%s
-        WHERE id=%s
-    """, (*values, row_id))
-
-    conn.commit()
-    conn.close()
-
-    return "อัปเดตสำเร็จ <a href='/'>กลับ</a>"
-
 @app.route("/delete_file/<int:file_id>")
 def delete_file(file_id):
     conn = get_db()
@@ -282,84 +141,9 @@ def delete_file(file_id):
 
     return "<script>alert('ลบสำเร็จ'); window.location.href='/'</script>"
 
-@app.route("/files")
-def all_files():
-    from math import ceil
-
-    page = int(request.args.get("page", 1))
-    per_page = 20
-
-    filter_date = request.args.get("date", "")
-    filter_customer = request.args.get("customer", "")
-    filter_game = request.args.get("game", "")
-
-    conn = get_db()
-    cursor = conn.cursor()
-
-    # 🔍 เงื่อนไข filter
-    query = """
-        SELECT id, customer, game, upload_date
-        FROM files
-        WHERE 1=1
-    """
-    params = []
-
-    if filter_customer:
-        query += " AND customer ILIKE %s"
-        params.append(f"%{filter_customer}%")
-
-    if filter_game:
-        query += " AND game ILIKE %s"
-        params.append(f"%{filter_game}%")
-
-    if filter_date:
-        query += " AND DATE(upload_date) = %s"
-        params.append(filter_date)
-
-    # 🔢 นับจำนวนทั้งหมด
-    count_query = f"SELECT COUNT(*) FROM ({query}) AS sub"
-    cursor.execute(count_query, params)
-    total_rows = cursor.fetchone()[0]
-
-    total_pages = max(1, ceil(total_rows / per_page))
-    offset = (page - 1) * per_page
-
-    # 📄 ดึงข้อมูลแบบแบ่งหน้า
-    query += " ORDER BY id DESC LIMIT %s OFFSET %s"
-    params.extend([per_page, offset])
-
-    cursor.execute(query, params)
-    files = cursor.fetchall()
-
-    conn.close()
-
-    return render_template(
-        "files.html",
-        files=files,
-        page=page,
-        total_pages=total_pages,
-        filter_date=filter_date,
-        filter_customer=filter_customer,
-        filter_game=filter_game
-    )
-
-@app.route("/view_file/<int:file_id>")
-def view_file(file_id):
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT col_A, col_B, col_C, col_D, col_E,
-               col_F, col_G, col_H, col_I, col_J, col_K
-        FROM data_rows
-        WHERE file_id = %s
-    """, (file_id,))
-
-    rows = cursor.fetchall()
-    conn.close()
-
-    return render_template("view_file.html", rows=rows)
-
+# ---------------------------
+# VACUUM
+# ---------------------------
 @app.route("/vacuum")
 def vacuum():
     password = request.args.get("pass")
@@ -367,21 +151,11 @@ def vacuum():
     if password != "081041":
         return "❌ Unauthorized"
 
-    try:
-        conn = get_db()
-        conn.autocommit = True
-        cursor = conn.cursor()
+    conn = get_db()
+    conn.autocommit = True
+    cursor = conn.cursor()
 
-        cursor.execute("VACUUM FULL;")
+    cursor.execute("VACUUM FULL;")
 
-        conn.close()
-        return "✅ ล้าง Storage สำเร็จ"
-
-    except Exception as e:
-        return f"❌ Error: {str(e)}"
-# ---------------------------
-# RUN SERVER
-# ---------------------------
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    conn.close()
+    return "✅ ล้าง Storage สำเร็จ"
