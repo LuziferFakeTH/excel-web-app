@@ -223,7 +223,7 @@ function runVacuum() {
 
     if (!confirmAction) return;
 
-    fetch("/vacuum")
+    fetch("/vacuum?pass=" + pass)
         .then(res => res.text())
         .then(data => {
             alert(data);
