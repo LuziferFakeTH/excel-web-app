@@ -345,8 +345,8 @@ def fill_search():
 
     try:
         cursor.execute("""
-        UPDATE data_rows SET search_vector =
-        to_tsvector('simple',
+        UPDATE data_rows
+        SET search_vector = to_tsvector('simple',
             coalesce(col_A,'') || ' ' ||
             coalesce(col_B,'') || ' ' ||
             coalesce(col_C,'') || ' ' ||
@@ -358,11 +358,13 @@ def fill_search():
             coalesce(col_I,'') || ' ' ||
             coalesce(col_J,'') || ' ' ||
             coalesce(col_K,'')
-        );
+        )
+        WHERE search_vector IS NULL
+        LIMIT 5000;
         """)
 
         conn.commit()
-        return "✅ ใส่ข้อมูล search_vector สำเร็จ"
+        return "✅ เติมทีละ 5000 แถว สำเร็จ (กดซ้ำได้)"
 
     except Exception as e:
         conn.rollback()
