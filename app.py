@@ -274,3 +274,37 @@ def update(row_id):
 
     return "<script>alert('อัปเดตสำเร็จ'); window.location.href='/'</script>"
 
+@app.route("/setup_search")
+def setup_search():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+        CREATE INDEX idx_search_fast
+        ON data_rows
+        USING GIN (
+            to_tsvector('simple',
+                coalesce(col_A,'') || ' ' ||
+                coalesce(col_B,'') || ' ' ||
+                coalesce(col_C,'') || ' ' ||
+                coalesce(col_D,'') || ' ' ||
+                coalesce(col_E,'') || ' ' ||
+                coalesce(col_F,'') || ' ' ||
+                coalesce(col_G,'') || ' ' ||
+                coalesce(col_H,'') || ' ' ||
+                coalesce(col_I,'') || ' ' ||
+                coalesce(col_J,'') || ' ' ||
+                coalesce(col_K,'')
+            )
+        );
+        """)
+        conn.commit()
+        return "✅ สร้าง index สำเร็จ (search จะเร็วขึ้นทันที)"
+
+    except Exception as e:
+        conn.rollback()
+        return f"❌ Error: {str(e)}"
+
+    finally:
+        conn.close()
