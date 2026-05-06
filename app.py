@@ -110,9 +110,6 @@ def search():
     if not keyword:
         return render_template("index.html", results=[])
 
-    # 🔥 clean keyword สำหรับ full text
-    clean_keyword = re.sub(r'[^a-zA-Z0-9 ]', ' ', keyword)
-
     conn = get_db()
     cursor = conn.cursor()
 
@@ -127,11 +124,15 @@ def search():
     FROM data_rows
     JOIN files ON data_rows.file_id = files.id
     WHERE 
-        search_vector @@ plainto_tsquery('simple', %s)
-        OR col_A ILIKE %s
+        -- 🔥 fallback UUID (ตัวนี้ต้องทำงานแน่)
+        col_A ILIKE %s
+
+        -- 🔥 full text (สำหรับคำทั่วไป)
+        OR search_vector @@ plainto_tsquery('simple', %s)
+
     ORDER BY data_rows.id DESC
     LIMIT 100
-    """, (clean_keyword, f"%{keyword}%"))
+    """, (f"%{keyword}%", keyword))
 
     results = cursor.fetchall()
     conn.close()
