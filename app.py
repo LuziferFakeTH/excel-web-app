@@ -112,30 +112,23 @@ def search():
     conn = get_db()
     cursor = conn.cursor()
 
-    try:
-        cursor.execute("""
-        SELECT 
-            files.id,           -- file_id
-            data_rows.id,       -- row_id
-            files.customer,
-            files.game,
-            files.upload_date,
-            data_rows.col_B     -- แพ็ค
-        FROM data_rows
-        JOIN files ON data_rows.file_id = files.id
-        WHERE search_vector @@ plainto_tsquery('simple', %s)
-        ORDER BY data_rows.id DESC
-        LIMIT 100
-        """, (keyword,))
+    cursor.execute("""
+    SELECT 
+        files.id,
+        data_rows.id,
+        files.customer,
+        files.game,
+        files.upload_date,
+        data_rows.col_B
+    FROM data_rows
+    JOIN files ON data_rows.file_id = files.id
+    WHERE search_vector @@ plainto_tsquery('simple', %s)
+    ORDER BY data_rows.id DESC
+    LIMIT 100
+    """, (keyword,))
 
-        results = cursor.fetchall()
-
-    except Exception as e:
-        conn.rollback()
-        return f"❌ Error: {str(e)}"
-
-    finally:
-        conn.close()
+    results = cursor.fetchall()
+    conn.close()
 
     return render_template("index.html", results=results)
 
