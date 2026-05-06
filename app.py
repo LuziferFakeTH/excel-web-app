@@ -6,6 +6,25 @@ from datetime import datetime
 import pytz
 
 app = Flask(__name__)
+def get_storage_info():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT pg_database_size(current_database());")
+    used_bytes = cursor.fetchone()[0]
+
+    conn.close()
+
+    total_bytes = 1024 * 1024 * 1024  # 1GB
+
+    return {
+        "percent_used": round((used_bytes / total_bytes) * 100, 2),
+        "remaining_kb": round((total_bytes - used_bytes) / 1024, 2)
+    }
+
+@app.context_processor
+def inject_storage():
+    return dict(storage=get_storage_info())
 
 # ---------------------------
 # CONNECT DB
