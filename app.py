@@ -281,6 +281,22 @@ def delete_file(file_id):
 
     return "<script>alert('ลบสำเร็จ'); window.location.href='/files'</script>"
 
+@app.route("/vacuum")
+def vacuum():
+    try:
+        conn = get_db()
+        conn.autocommit = True  # สำคัญ
+        cursor = conn.cursor()
+
+        cursor.execute("VACUUM FULL;")
+
+        conn.close()
+        return "✅ ล้าง Storage สำเร็จ"
+
+    except Exception as e:
+        return f"❌ Error: {str(e)}"
+
+
 # ---------------------------
 # RUN
 # ---------------------------
