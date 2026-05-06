@@ -107,11 +107,11 @@ def upload():
 def search():
     keyword = request.args.get("q", "").strip()
 
-    # 🔥 แปลง keyword ให้ clean
-    keyword = re.sub(r'[^a-zA-Z0-9 ]', ' ', keyword)
-
     if not keyword:
         return render_template("index.html", results=[])
+
+    # 🔥 clean keyword สำหรับ full text
+    clean_keyword = re.sub(r'[^a-zA-Z0-9 ]', ' ', keyword)
 
     conn = get_db()
     cursor = conn.cursor()
@@ -126,9 +126,12 @@ def search():
         data_rows.col_B
     FROM data_rows
     JOIN files ON data_rows.file_id = files.id
-    WHERE search_vector @@ plainto_tsquery('simple', %s)
+    WHERE 
+        search_vector @@ plainto_tsquery('simple', %s)
+        OR col_A ILIKE %s
+    ORDER BY data_rows.id DESC
     LIMIT 100
-    """, (keyword,))
+    """, (clean_keyword, f"%{keyword}%"))
 
     results = cursor.fetchall()
     conn.close()
