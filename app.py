@@ -78,7 +78,8 @@ init_db()
 # ---------------------------
 @app.route("/")
 def index():
-    return render_template("index.html")
+    storage = get_storage_info()
+    return render_template("index.html", storage=storage)
 
 # ---------------------------
 # UPLOAD
