@@ -104,27 +104,38 @@ def upload():
 # ---------------------------
 @app.route("/search")
 def search():
-    keyword = request.args.get("q")
+    keyword = request.args.get("q", "").strip()
+
+    if not keyword:
+        return render_template("index.html", results=[])
 
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("""
-    SELECT files.id, data_rows.id, files.customer, files.game,
-           files.upload_date, data_rows.col_B
-    FROM data_rows
-    JOIN files ON data_rows.file_id = files.id
-    WHERE to_tsvector('simple',
-            col_A || ' ' || col_B || ' ' || col_C || ' ' ||
-            col_D || ' ' || col_E || ' ' || col_F || ' ' ||
-            col_G || ' ' || col_H || ' ' || col_I || ' ' ||
-            col_J || ' ' || col_K
-        ) @@ plainto_tsquery(%s)
-    LIMIT 100
-    """, (keyword,))
+    try:
+        cursor.execute("""
+        SELECT 
+            files.id,           -- file_id
+            data_rows.id,       -- row_id
+            files.customer,
+            files.game,
+            files.upload_date,
+            data_rows.col_B     -- แพ็ค
+        FROM data_rows
+        JOIN files ON data_rows.file_id = files.id
+        WHERE search_vector @@ plainto_tsquery('simple', %s)
+        ORDER BY data_rows.id DESC
+        LIMIT 100
+        """, (keyword,))
 
-    results = cursor.fetchall()
-    conn.close()
+        results = cursor.fetchall()
+
+    except Exception as e:
+        conn.rollback()
+        return f"❌ Error: {str(e)}"
+
+    finally:
+        conn.close()
 
     return render_template("index.html", results=results)
 
@@ -304,6 +315,28 @@ def setup_search():
         """)
         conn.commit()
         return "✅ สร้าง index สำเร็จ (search จะเร็วขึ้นทันที)"
+
+    except Exception as e:
+        conn.rollback()
+        return f"❌ Error: {str(e)}"
+
+    finally:
+        conn.close()
+        
+@app.route("/setup_db")
+def setup_db():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        # 1. เพิ่ม column
+        cursor.execute("""
+            ALTER TABLE data_rows
+            ADD COLUMN search_vector tsvector;
+        """)
+
+        conn.commit()
+        return "✅ เพิ่ม column สำเร็จ"
 
     except Exception as e:
         conn.rollback()
