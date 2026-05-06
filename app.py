@@ -1,19 +1,18 @@
 from flask import Flask, request, render_template
 import pandas as pd
-from db import get_db
-from utils import get_storage_info
+import psycopg2
+import os
 from datetime import datetime
 import pytz
-import re
 
 app = Flask(__name__)
 
 # ---------------------------
-# GLOBAL STORAGE (แก้ปัญหา undefined)
+# CONNECT DB
 # ---------------------------
-@app.context_processor
-def inject_storage():
-    return dict(storage=get_storage_info())
+def get_db():
+    DATABASE_URL = os.environ.get("DATABASE_URL")
+    return psycopg2.connect(DATABASE_URL)
 
 # ---------------------------
 # INIT DB
@@ -71,7 +70,7 @@ def upload():
     customer = request.form["customer"]
     game = request.form["game"]
 
-    df = pd.read_excel(file)
+    df = pd.read_excel(file, dtype=str)
     df_data = df.iloc[:, 0:11].fillna("")
 
     conn = get_db()
@@ -92,7 +91,9 @@ def upload():
 
     for _, row in df_data.iterrows():
         cursor.execute("""
-            INSERT INTO data_rows VALUES (DEFAULT,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            INSERT INTO data_rows VALUES (
+                DEFAULT,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s
+            )
         """, (file_id, *[str(x) for x in row]))
 
     conn.commit()
@@ -101,7 +102,7 @@ def upload():
     return "Upload สำเร็จ <a href='/'>กลับ</a>"
 
 # ---------------------------
-# SEARCH
+# SEARCH (เวอร์ชันเดิม เสถียร)
 # ---------------------------
 @app.route("/search")
 def search():
@@ -124,15 +125,20 @@ def search():
     FROM data_rows
     JOIN files ON data_rows.file_id = files.id
     WHERE 
-        -- 🔥 fallback UUID (ตัวนี้ต้องทำงานแน่)
-        col_A ILIKE %s
-
-        -- 🔥 full text (สำหรับคำทั่วไป)
-        OR search_vector @@ plainto_tsquery('simple', %s)
-
+        col_A ILIKE %s OR
+        col_B ILIKE %s OR
+        col_C ILIKE %s OR
+        col_D ILIKE %s OR
+        col_E ILIKE %s OR
+        col_F ILIKE %s OR
+        col_G ILIKE %s OR
+        col_H ILIKE %s OR
+        col_I ILIKE %s OR
+        col_J ILIKE %s OR
+        col_K ILIKE %s
     ORDER BY data_rows.id DESC
     LIMIT 100
-    """, (f"%{keyword}%", keyword))
+    """, tuple([f"%{keyword}%"] * 11))
 
     results = cursor.fetchall()
     conn.close()
@@ -140,101 +146,27 @@ def search():
     return render_template("index.html", results=results)
 
 # ---------------------------
-# DELETE FILE
-# ---------------------------
-@app.route("/delete_file/<int:file_id>")
-def delete_file(file_id):
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM data_rows WHERE file_id = %s", (file_id,))
-    cursor.execute("DELETE FROM files WHERE id = %s", (file_id,))
-
-    conn.commit()
-    conn.close()
-
-    return "<script>alert('ลบสำเร็จ'); window.location.href='/'</script>"
-
-# ---------------------------
-# VACUUM
-# ---------------------------
-@app.route("/vacuum")
-def vacuum():
-    password = request.args.get("pass")
-
-    if password != "081041":
-        return "❌ Unauthorized"
-
-    conn = get_db()
-    conn.autocommit = True
-    cursor = conn.cursor()
-
-    cursor.execute("VACUUM FULL;")
-
-    conn.close()
-    return "✅ ล้าง Storage สำเร็จ"
-# ---------------------------
 # FILE LIST
 # ---------------------------
 @app.route("/files")
-def all_files():
-    from math import ceil
-
-    page = int(request.args.get("page", 1))
-    per_page = 20
-
-    filter_date = request.args.get("date", "")
-    filter_customer = request.args.get("customer", "")
-    filter_game = request.args.get("game", "")
-
+def files():
     conn = get_db()
     cursor = conn.cursor()
 
-    query = """
+    cursor.execute("""
         SELECT id, customer, game, upload_date
         FROM files
-        WHERE 1=1
-    """
-    params = []
+        ORDER BY id DESC
+    """)
 
-    if filter_customer:
-        query += " AND customer ILIKE %s"
-        params.append(f"%{filter_customer}%")
-
-    if filter_game:
-        query += " AND game ILIKE %s"
-        params.append(f"%{filter_game}%")
-
-    if filter_date:
-        query += " AND DATE(upload_date) = %s"
-        params.append(filter_date)
-
-    count_query = f"SELECT COUNT(*) FROM ({query}) AS sub"
-    cursor.execute(count_query, params)
-    total_rows = cursor.fetchone()[0]
-
-    total_pages = max(1, ceil(total_rows / per_page))
-    offset = (page - 1) * per_page
-
-    query += " ORDER BY id DESC LIMIT %s OFFSET %s"
-    params.extend([per_page, offset])
-
-    cursor.execute(query, params)
     files = cursor.fetchall()
-
     conn.close()
 
-    return render_template(
-        "files.html",
-        files=files,
-        page=page,
-        total_pages=total_pages,
-        filter_date=filter_date,
-        filter_customer=filter_customer,
-        filter_game=filter_game
-    )
+    return render_template("files.html", files=files)
 
-
+# ---------------------------
+# VIEW FILE
+# ---------------------------
 @app.route("/view_file/<int:file_id>")
 def view_file(file_id):
     conn = get_db()
@@ -251,6 +183,10 @@ def view_file(file_id):
     conn.close()
 
     return render_template("view_file.html", rows=rows)
+
+# ---------------------------
+# DETAIL (แก้ไข)
+# ---------------------------
 @app.route("/detail/<int:row_id>")
 def detail(row_id):
     conn = get_db()
@@ -268,6 +204,9 @@ def detail(row_id):
 
     return render_template("detail.html", row=row, row_id=row_id)
 
+# ---------------------------
+# UPDATE
+# ---------------------------
 @app.route("/update/<int:row_id>", methods=["POST"])
 def update(row_id):
     conn = get_db()
@@ -285,4 +224,27 @@ def update(row_id):
     conn.commit()
     conn.close()
 
-    return "<script>alert('อัปเดตสำเร็จ'); window.location.href='/files'</script>"
+    return "อัปเดตสำเร็จ <a href='/'>กลับ</a>"
+
+# ---------------------------
+# DELETE FILE
+# ---------------------------
+@app.route("/delete_file/<int:file_id>")
+def delete_file(file_id):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM data_rows WHERE file_id = %s", (file_id,))
+    cursor.execute("DELETE FROM files WHERE id = %s", (file_id,))
+
+    conn.commit()
+    conn.close()
+
+    return "<script>alert('ลบสำเร็จ'); window.location.href='/files'</script>"
+
+# ---------------------------
+# RUN
+# ---------------------------
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
