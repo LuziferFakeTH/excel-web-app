@@ -392,3 +392,19 @@ def create_index():
 
     finally:
         conn.close()
+
+@app.route("/check_column")
+def check_column():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE table_name = 'data_rows';
+    """)
+
+    cols = cursor.fetchall()
+    conn.close()
+
+    return "<br>".join([c[0] for c in cols])
