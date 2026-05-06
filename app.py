@@ -119,7 +119,7 @@ def upload():
     conn.commit()
     conn.close()
 
-    return "Upload สำเร็จ <a href='/'>กลับ</a>"
+    return render_template("success.html")
 
 # ---------------------------
 # SEARCH (เวอร์ชันเดิม เสถียร)
