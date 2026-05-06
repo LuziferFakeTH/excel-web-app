@@ -114,11 +114,14 @@ def search():
            files.upload_date, data_rows.col_B
     FROM data_rows
     JOIN files ON data_rows.file_id = files.id
-    WHERE col_A ILIKE %s OR col_B ILIKE %s OR col_C ILIKE %s
-       OR col_D ILIKE %s OR col_E ILIKE %s OR col_F ILIKE %s
-       OR col_G ILIKE %s OR col_H ILIKE %s OR col_I ILIKE %s
-       OR col_J ILIKE %s OR col_K ILIKE %s
-    """, tuple([f"%{keyword}%"] * 11))
+    WHERE to_tsvector('simple',
+            col_A || ' ' || col_B || ' ' || col_C || ' ' ||
+            col_D || ' ' || col_E || ' ' || col_F || ' ' ||
+            col_G || ' ' || col_H || ' ' || col_I || ' ' ||
+            col_J || ' ' || col_K
+        ) @@ plainto_tsquery(%s)
+    LIMIT 100
+    """, (keyword,))
 
     results = cursor.fetchall()
     conn.close()
