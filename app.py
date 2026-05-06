@@ -344,3 +344,36 @@ def setup_db():
 
     finally:
         conn.close()
+        
+@app.route("/fill_search")
+def fill_search():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+        UPDATE data_rows SET search_vector =
+        to_tsvector('simple',
+            coalesce(col_A,'') || ' ' ||
+            coalesce(col_B,'') || ' ' ||
+            coalesce(col_C,'') || ' ' ||
+            coalesce(col_D,'') || ' ' ||
+            coalesce(col_E,'') || ' ' ||
+            coalesce(col_F,'') || ' ' ||
+            coalesce(col_G,'') || ' ' ||
+            coalesce(col_H,'') || ' ' ||
+            coalesce(col_I,'') || ' ' ||
+            coalesce(col_J,'') || ' ' ||
+            coalesce(col_K,'')
+        );
+        """)
+
+        conn.commit()
+        return "✅ ใส่ข้อมูล search_vector สำเร็จ"
+
+    except Exception as e:
+        conn.rollback()
+        return f"❌ Error: {str(e)}"
+
+    finally:
+        conn.close()
