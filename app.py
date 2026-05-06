@@ -377,3 +377,25 @@ def fill_search():
 
     finally:
         conn.close()
+        
+@app.route("/create_index")
+def create_index():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+        CREATE INDEX idx_search_vector
+        ON data_rows
+        USING GIN (search_vector);
+        """)
+
+        conn.commit()
+        return "✅ สร้าง INDEX สำเร็จ (ตอนนี้ search จะเร็วมาก)"
+
+    except Exception as e:
+        conn.rollback()
+        return f"❌ Error: {str(e)}"
+
+    finally:
+        conn.close()
