@@ -155,7 +155,7 @@ def vacuum():
     conn.autocommit = True
     cursor = conn.cursor()
 
-    cursor.execute("VACUUM FULL;")+
+    cursor.execute("VACUUM FULL;")
 
     conn.close()
     return "✅ ล้าง Storage สำเร็จ"
