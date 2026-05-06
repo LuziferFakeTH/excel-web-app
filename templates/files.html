@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>ไฟล์ทั้งหมด</title>
-    <link rel="icon" type="image/png" href="/static/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -12,10 +11,35 @@
 
     <h2 class="mb-4 text-center">📂 รายการไฟล์ทั้งหมด</h2>
 
-    <div class="mb-3 text-end">
+    <div class="mb-3 d-flex justify-content-between">
         <a href="/" class="btn btn-secondary">⬅️ กลับหน้าหลัก</a>
     </div>
 
+    <!-- 🔍 FILTER -->
+    <form method="get" class="row mb-3">
+        <input type="hidden" name="page" value="1">
+
+        <div class="col-md-3">
+            <input type="text" name="date" class="form-control" placeholder="วันที่"
+                   value="{{ filter_date }}">
+        </div>
+
+        <div class="col-md-3">
+            <input type="text" name="customer" class="form-control" placeholder="เจ้าที่สั่ง"
+                   value="{{ filter_customer }}">
+        </div>
+
+        <div class="col-md-3">
+            <input type="text" name="game" class="form-control" placeholder="เกมส์"
+                   value="{{ filter_game }}">
+        </div>
+
+        <div class="col-md-3">
+            <button class="btn btn-primary w-100">Filter</button>
+        </div>
+    </form>
+
+    <!-- TABLE -->
     <div class="card shadow">
         <div class="card-body table-responsive">
 
@@ -37,12 +61,10 @@
                         <td>{{ f[3] }}</td>
 
                         <td>
-                            <!-- ดูข้อมูลในไฟล์ -->
                             <a href="/view_file/{{ f[0] }}" class="btn btn-sm btn-primary">
                                 🔍 ดู
                             </a>
 
-                            <!-- ลบ -->
                             <a href="/delete_file/{{ f[0] }}"
                                class="btn btn-sm btn-danger"
                                onclick="return confirm('ลบไฟล์นี้ทั้งหมด?')">
@@ -57,6 +79,40 @@
 
         </div>
     </div>
+
+    <!-- 🔢 PAGINATION -->
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+
+            {% if page > 1 %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ page-1 }}&date={{ filter_date }}&customer={{ filter_customer }}&game={{ filter_game }}">
+                   ก่อนหน้า
+                </a>
+            </li>
+            {% endif %}
+
+            {% for p in range(1, total_pages+1) %}
+            <li class="page-item {% if p == page %}active{% endif %}">
+                <a class="page-link"
+                   href="?page={{ p }}&date={{ filter_date }}&customer={{ filter_customer }}&game={{ filter_game }}">
+                   {{ p }}
+                </a>
+            </li>
+            {% endfor %}
+
+            {% if page < total_pages %}
+            <li class="page-item">
+                <a class="page-link"
+                   href="?page={{ page+1 }}&date={{ filter_date }}&customer={{ filter_customer }}&game={{ filter_game }}">
+                   ถัดไป
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+    </nav>
 
 </div>
 
