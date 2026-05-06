@@ -156,6 +156,9 @@ def vacuum():
     cursor = conn.cursor()
 
     cursor.execute("VACUUM FULL;")+
+
+    conn.close()
+    return "✅ ล้าง Storage สำเร็จ"
 # ---------------------------
 # File
 # ---------------------------
@@ -219,5 +222,4 @@ def all_files():
         filter_game=filter_game
     )
 
-    conn.close()
-    return "✅ ล้าง Storage สำเร็จ"
+
