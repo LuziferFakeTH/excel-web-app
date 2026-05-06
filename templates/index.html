@@ -201,12 +201,13 @@ document.addEventListener("DOMContentLoaded", function () {
         {{ storage.remaining_kb }} KB left
     </div>
 
-</div>
+    <!-- 🔥 ปุ่มอยู่ตรงนี้ -->
+    <div class="mt-2 text-center">
+        <button onclick="runVacuum()" class="btn btn-danger btn-sm w-100">
+            🧹 ล้าง Storage
+        </button>
+    </div>
 
-<div class="text-center mb-3">
-    <button onclick="runVacuum()" class="btn btn-danger">
-        🧹 ล้าง Storage
-    </button>
 </div>
 
 <script>
