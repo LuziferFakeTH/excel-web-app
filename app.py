@@ -358,6 +358,21 @@ def view_file(file_id):
     conn.close()
 
     return render_template("view_file.html", rows=rows)
+
+@app.route("/vacuum")
+def vacuum():
+    try:
+        conn = get_db()
+        conn.autocommit = True  # สำคัญ
+        cursor = conn.cursor()
+
+        cursor.execute("VACUUM FULL;")
+
+        conn.close()
+        return "✅ ล้าง Storage สำเร็จ"
+
+    except Exception as e:
+        return f"❌ Error: {str(e)}"
 # ---------------------------
 # RUN SERVER
 # ---------------------------
