@@ -359,12 +359,15 @@ def fill_search():
             coalesce(col_J,'') || ' ' ||
             coalesce(col_K,'')
         )
-        WHERE search_vector IS NULL
-        LIMIT 5000;
+        WHERE id IN (
+            SELECT id FROM data_rows
+            WHERE search_vector IS NULL
+            LIMIT 2000
+        );
         """)
 
         conn.commit()
-        return "✅ เติมทีละ 5000 แถว สำเร็จ (กดซ้ำได้)"
+        return "✅ เติม 2000 แถว (กดซ้ำจนกว่าจะครบ)"
 
     except Exception as e:
         conn.rollback()
