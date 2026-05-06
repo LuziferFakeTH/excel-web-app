@@ -291,8 +291,8 @@ def all_files():
         params.append(f"%{filter_game}%")
 
     if filter_date:
-        query += " AND upload_date::text ILIKE %s"
-        params.append(f"%{filter_date}%")
+        query += " AND DATE(upload_date) = %s"
+        params.append(filter_date)
 
     # 🔢 นับจำนวนทั้งหมด
     count_query = f"SELECT COUNT(*) FROM ({query}) AS sub"
