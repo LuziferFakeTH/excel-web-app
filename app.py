@@ -174,7 +174,7 @@ def vacuum():
     conn.close()
     return "✅ ล้าง Storage สำเร็จ"
 # ---------------------------
-# File
+# FILE LIST
 # ---------------------------
 @app.route("/files")
 def all_files():
@@ -209,7 +209,6 @@ def all_files():
         query += " AND DATE(upload_date) = %s"
         params.append(filter_date)
 
-    # count
     count_query = f"SELECT COUNT(*) FROM ({query}) AS sub"
     cursor.execute(count_query, params)
     total_rows = cursor.fetchone()[0]
@@ -217,7 +216,6 @@ def all_files():
     total_pages = max(1, ceil(total_rows / per_page))
     offset = (page - 1) * per_page
 
-    # data
     query += " ORDER BY id DESC LIMIT %s OFFSET %s"
     params.extend([per_page, offset])
 
@@ -235,13 +233,15 @@ def all_files():
         filter_customer=filter_customer,
         filter_game=filter_game
     )
+
+
 @app.route("/view_file/<int:file_id>")
 def view_file(file_id):
     conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT col_A, col_B, col_C, col_D, col_E,
+        SELECT id, col_A, col_B, col_C, col_D, col_E,
                col_F, col_G, col_H, col_I, col_J, col_K
         FROM data_rows
         WHERE file_id = %s
@@ -251,7 +251,6 @@ def view_file(file_id):
     conn.close()
 
     return render_template("view_file.html", rows=rows)
-
 @app.route("/detail/<int:row_id>")
 def detail(row_id):
     conn = get_db()
@@ -286,220 +285,4 @@ def update(row_id):
     conn.commit()
     conn.close()
 
-    return "<script>alert('อัปเดตสำเร็จ'); window.location.href='/'</script>"
-
-@app.route("/setup_search")
-def setup_search():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute("""
-        CREATE INDEX idx_search_fast
-        ON data_rows
-        USING GIN (
-            to_tsvector('simple',
-                coalesce(col_A,'') || ' ' ||
-                coalesce(col_B,'') || ' ' ||
-                coalesce(col_C,'') || ' ' ||
-                coalesce(col_D,'') || ' ' ||
-                coalesce(col_E,'') || ' ' ||
-                coalesce(col_F,'') || ' ' ||
-                coalesce(col_G,'') || ' ' ||
-                coalesce(col_H,'') || ' ' ||
-                coalesce(col_I,'') || ' ' ||
-                coalesce(col_J,'') || ' ' ||
-                coalesce(col_K,'')
-            )
-        );
-        """)
-        conn.commit()
-        return "✅ สร้าง index สำเร็จ (search จะเร็วขึ้นทันที)"
-
-    except Exception as e:
-        conn.rollback()
-        return f"❌ Error: {str(e)}"
-
-    finally:
-        conn.close()
-        
-@app.route("/setup_db")
-def setup_db():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    try:
-        # 1. เพิ่ม column
-        cursor.execute("""
-            ALTER TABLE data_rows
-            ADD COLUMN search_vector tsvector;
-        """)
-
-        conn.commit()
-        return "✅ เพิ่ม column สำเร็จ"
-
-    except Exception as e:
-        conn.rollback()
-        return f"❌ Error: {str(e)}"
-
-    finally:
-        conn.close()
-        
-@app.route("/fill_search")
-def fill_search():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute("""
-        UPDATE data_rows
-        SET search_vector = to_tsvector('simple',
-            coalesce(col_A,'') || ' ' ||
-            coalesce(col_B,'') || ' ' ||
-            coalesce(col_C,'') || ' ' ||
-            coalesce(col_D,'') || ' ' ||
-            coalesce(col_E,'') || ' ' ||
-            coalesce(col_F,'') || ' ' ||
-            coalesce(col_G,'') || ' ' ||
-            coalesce(col_H,'') || ' ' ||
-            coalesce(col_I,'') || ' ' ||
-            coalesce(col_J,'') || ' ' ||
-            coalesce(col_K,'')
-        )
-        WHERE id IN (
-            SELECT id FROM data_rows
-            WHERE search_vector IS NULL
-            LIMIT 2000
-        );
-        """)
-
-        conn.commit()
-        return "✅ เติม 2000 แถว (กดซ้ำจนกว่าจะครบ)"
-
-    except Exception as e:
-        conn.rollback()
-        return f"❌ Error: {str(e)}"
-
-    finally:
-        conn.close()
-        
-@app.route("/create_index")
-def create_index():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute("""
-        CREATE INDEX idx_search_vector
-        ON data_rows
-        USING GIN (search_vector);
-        """)
-
-        conn.commit()
-        return "✅ สร้าง INDEX สำเร็จ (ตอนนี้ search จะเร็วมาก)"
-
-    except Exception as e:
-        conn.rollback()
-        return f"❌ Error: {str(e)}"
-
-    finally:
-        conn.close()
-
-@app.route("/check_column")
-def check_column():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    SELECT column_name
-    FROM information_schema.columns
-    WHERE table_name = 'data_rows';
-    """)
-
-    cols = cursor.fetchall()
-    conn.close()
-
-    return "<br>".join([c[0] for c in cols])
-
-@app.route("/check_fill")
-def check_fill():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    SELECT COUNT(*) FROM data_rows
-    WHERE search_vector IS NULL
-    """)
-
-    count = cursor.fetchone()[0]
-    conn.close()
-
-    return f"เหลือ {count} แถวที่ยังไม่ fill"
-
-
-@app.route("/debug_search")
-def debug_search():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    SELECT col_A, search_vector
-    FROM data_rows
-    LIMIT 5
-    """)
-
-    rows = cursor.fetchall()
-    conn.close()
-
-    return "<br><br>".join([str(r) for r in rows])
-
-@app.route("/debug_raw")
-def debug_raw():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    SELECT col_A
-    FROM data_rows
-    WHERE col_A ILIKE %s
-    LIMIT 10
-    """, ("%963C777E%",))
-
-    rows = cursor.fetchall()
-    conn.close()
-
-    return "<br>".join([str(r) for r in rows])
-
-@app.route("/debug_search_exact")
-def debug_search_exact():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    SELECT col_A
-    FROM data_rows
-    WHERE col_A = %s
-    """, ("mock_963C777E-3ECF-4ADB-A5F4-3A1FB0BF4633",))
-
-    rows = cursor.fetchall()
-    conn.close()
-
-    return str(rows)
-
-
-@app.route("/debug_like")
-def debug_like():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    SELECT col_A
-    FROM data_rows
-    WHERE col_A ILIKE '%963c777e%'
-    LIMIT 10
-    """)
-
-    rows = cursor.fetchall()
-    conn.close()
-
-    return "<br>".join([str(r) for r in rows])
+    return "<script>alert('อัปเดตสำเร็จ'); window.location.href='/files'</script>"
