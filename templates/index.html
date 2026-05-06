@@ -121,29 +121,57 @@
         }
 
     </style>
+    
+    <style>
+#storage-box {
+    position: fixed;
+    top: 10px;
+    right: 15px;
+    width: 160px;
+    background: white;
+    padding: 8px 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    font-size: 12px;
+    z-index: 9999;
+}
+    </style>
 </head>
-<div class="card shadow mb-4">
-    <div class="card-header bg-info text-white">
-        💾 Storage Database
+
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let percent = {{ storage.percent_used }};
+    let bar = document.getElementById("storage-bar");
+
+    if (percent < 30) {
+        bar.classList.add("bg-success"); // เขียว
+    } else if (percent < 80) {
+        bar.classList.add("bg-warning"); // เหลือง
+    } else {
+        bar.classList.add("bg-danger"); // แดง
+    }
+});
+</script>
+<!-- 💾 Storage Mini Widget -->
+<div id="storage-box">
+    <div class="small text-end">
+        {{ storage.percent_used }}%
     </div>
 
-    <div class="card-body">
-
-        <p><b>ใช้งานไป:</b> {{ storage.used_kb }} KB</p>
-        <p><b>เหลือ:</b> {{ storage.remaining_kb }} KB</p>
-
-        <div class="progress">
-            <div class="progress-bar"
-                 role="progressbar"
-                 style="width: {{ storage.percent_used }}%">
-                {{ storage.percent_used }}%
-            </div>
+    <div class="progress" style="height: 8px;">
+        <div id="storage-bar"
+             class="progress-bar"
+             style="width: {{ storage.percent_used }}%;">
         </div>
+    </div>
 
+    <div class="small text-end">
+        เหลือ {{ storage.remaining_kb }} KB
     </div>
 </div>
 
-<body>
+
 
 <div class="container mt-5">
 
