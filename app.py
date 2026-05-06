@@ -361,9 +361,14 @@ def view_file(file_id):
 
 @app.route("/vacuum")
 def vacuum():
+    password = request.args.get("pass")
+
+    if password != "1234":
+        return "❌ Unauthorized"
+
     try:
         conn = get_db()
-        conn.autocommit = True  # สำคัญ
+        conn.autocommit = True
         cursor = conn.cursor()
 
         cursor.execute("VACUUM FULL;")
