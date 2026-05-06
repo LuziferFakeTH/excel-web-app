@@ -279,7 +279,7 @@ def delete_file(file_id):
     conn.commit()
     conn.close()
 
-    return "<script>alert('ลบสำเร็จ'); window.location.href='/files'</script>"
+    return render_template("delete_success.html")
 
 @app.route("/vacuum")
 def vacuum():
