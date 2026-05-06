@@ -223,8 +223,9 @@ def search():
 
     results = cursor.fetchall()
     conn.close()
+    storage = get_storage_info()
 
-    return render_template("index.html", results=results)
+    return render_template("index.html", results=results, storage=storage)
 
 # ---------------------------
 # DETAIL
