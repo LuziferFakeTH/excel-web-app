@@ -485,3 +485,21 @@ def debug_search_exact():
     conn.close()
 
     return str(rows)
+
+
+@app.route("/debug_like")
+def debug_like():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT col_A
+    FROM data_rows
+    WHERE col_A ILIKE '%963c777e%'
+    LIMIT 10
+    """)
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return "<br>".join([str(r) for r in rows])
