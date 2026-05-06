@@ -122,6 +122,26 @@
 
     </style>
 </head>
+<div class="card shadow mb-4">
+    <div class="card-header bg-info text-white">
+        💾 Storage Database
+    </div>
+
+    <div class="card-body">
+
+        <p><b>ใช้งานไป:</b> {{ storage.used_kb }} KB</p>
+        <p><b>เหลือ:</b> {{ storage.remaining_kb }} KB</p>
+
+        <div class="progress">
+            <div class="progress-bar"
+                 role="progressbar"
+                 style="width: {{ storage.percent_used }}%">
+                {{ storage.percent_used }}%
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <body>
 
