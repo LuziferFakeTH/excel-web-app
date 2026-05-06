@@ -262,19 +262,64 @@ def delete_file(file_id):
 
 @app.route("/files")
 def all_files():
+    from math import ceil
+
+    page = int(request.args.get("page", 1))
+    per_page = 20
+
+    filter_date = request.args.get("date", "")
+    filter_customer = request.args.get("customer", "")
+    filter_game = request.args.get("game", "")
+
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("""
+    # 🔍 เงื่อนไข filter
+    query = """
         SELECT id, customer, game, upload_date
         FROM files
-        ORDER BY id DESC
-    """)
+        WHERE 1=1
+    """
+    params = []
 
+    if filter_customer:
+        query += " AND customer ILIKE %s"
+        params.append(f"%{filter_customer}%")
+
+    if filter_game:
+        query += " AND game ILIKE %s"
+        params.append(f"%{filter_game}%")
+
+    if filter_date:
+        query += " AND upload_date::text ILIKE %s"
+        params.append(f"%{filter_date}%")
+
+    # 🔢 นับจำนวนทั้งหมด
+    count_query = f"SELECT COUNT(*) FROM ({query}) AS sub"
+    cursor.execute(count_query, params)
+    total_rows = cursor.fetchone()[0]
+
+    total_pages = max(1, ceil(total_rows / per_page))
+    offset = (page - 1) * per_page
+
+    # 📄 ดึงข้อมูลแบบแบ่งหน้า
+    query += " ORDER BY id DESC LIMIT %s OFFSET %s"
+    params.extend([per_page, offset])
+
+    cursor.execute(query, params)
     files = cursor.fetchall()
+
     conn.close()
 
-    return render_template("files.html", files=files)
+    return render_template(
+        "files.html",
+        files=files,
+        page=page,
+        total_pages=total_pages,
+        filter_date=filter_date,
+        filter_customer=filter_customer,
+        filter_game=filter_game
+    )
 
 @app.route("/view_file/<int:file_id>")
 def view_file(file_id):
