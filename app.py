@@ -170,19 +170,38 @@ def search():
 # ---------------------------
 @app.route("/files")
 def files():
+    from math import ceil
+
+    page = int(request.args.get("page", 1))
+    per_page = 20
+
     conn = get_db()
     cursor = conn.cursor()
 
+    # นับจำนวนทั้งหมด
+    cursor.execute("SELECT COUNT(*) FROM files")
+    total_rows = cursor.fetchone()[0]
+
+    total_pages = max(1, ceil(total_rows / per_page))
+    offset = (page - 1) * per_page
+
+    # ดึงข้อมูล
     cursor.execute("""
         SELECT id, customer, game, upload_date
         FROM files
         ORDER BY id DESC
-    """)
+        LIMIT %s OFFSET %s
+    """, (per_page, offset))
 
-    files = cursor.fetchall()
+    files_data = cursor.fetchall()
     conn.close()
 
-    return render_template("files.html", files=files)
+    return render_template(
+        "files.html",
+        files=files_data,
+        page=page,
+        total_pages=total_pages
+    )
 
 # ---------------------------
 # VIEW FILE
