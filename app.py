@@ -451,3 +451,36 @@ def debug_search():
     conn.close()
 
     return "<br><br>".join([str(r) for r in rows])
+
+@app.route("/debug_raw")
+def debug_raw():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT col_A
+    FROM data_rows
+    WHERE col_A ILIKE %s
+    LIMIT 10
+    """, ("%963C777E%",))
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return "<br>".join([str(r) for r in rows])
+
+@app.route("/debug_search_exact")
+def debug_search_exact():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT col_A
+    FROM data_rows
+    WHERE col_A = %s
+    """, ("mock_963C777E-3ECF-4ADB-A5F4-3A1FB0BF4633",))
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return str(rows)
