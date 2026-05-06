@@ -171,11 +171,11 @@ document.addEventListener("DOMContentLoaded", function () {
     let bar = document.getElementById("storage-bar");
 
     if (percent < 30) {
-        bar.classList.add("bg-success"); // เขียว
+        bar.classList.add("neon-green");
     } else if (percent < 80) {
-        bar.classList.add("bg-warning"); // เหลือง
+        bar.classList.add("neon-yellow");
     } else {
-        bar.classList.add("bg-danger"); // แดง
+        bar.classList.add("neon-red");
     }
 });
 </script>
