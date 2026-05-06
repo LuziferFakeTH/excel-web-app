@@ -221,5 +221,56 @@ def all_files():
         filter_customer=filter_customer,
         filter_game=filter_game
     )
+@app.route("/view_file/<int:file_id>")
+def view_file(file_id):
+    conn = get_db()
+    cursor = conn.cursor()
 
+    cursor.execute("""
+        SELECT col_A, col_B, col_C, col_D, col_E,
+               col_F, col_G, col_H, col_I, col_J, col_K
+        FROM data_rows
+        WHERE file_id = %s
+    """, (file_id,))
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return render_template("view_file.html", rows=rows)
+
+@app.route("/detail/<int:row_id>")
+def detail(row_id):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT col_A, col_B, col_C, col_D, col_E,
+               col_F, col_G, col_H, col_I, col_J, col_K
+        FROM data_rows
+        WHERE id = %s
+    """, (row_id,))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    return render_template("detail.html", row=row, row_id=row_id)
+
+@app.route("/update/<int:row_id>", methods=["POST"])
+def update(row_id):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    values = [request.form[f"col{i}"] for i in range(11)]
+
+    cursor.execute("""
+        UPDATE data_rows SET
+            col_A=%s, col_B=%s, col_C=%s, col_D=%s, col_E=%s,
+            col_F=%s, col_G=%s, col_H=%s, col_I=%s, col_J=%s, col_K=%s
+        WHERE id=%s
+    """, (*values, row_id))
+
+    conn.commit()
+    conn.close()
+
+    return "<script>alert('อัปเดตสำเร็จ'); window.location.href='/'</script>"
 
