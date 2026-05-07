@@ -1,43 +1,200 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>แก้ไขข้อมูล</title>
-    <link rel="icon" type="image/png" href="/static/logo.png">
+{% extends "base.html" %}
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+{% block content %}
 
-<body class="bg-light">
+<style>
 
-<div class="container mt-5">
+.edit-wrapper{
+    min-height:100vh;
 
-    <div class="card shadow">
-        <div class="card-header bg-warning">
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:40px 15px;
+}
+
+.edit-card{
+
+    width:100%;
+    max-width:1100px;
+
+    background:rgba(15,23,42,0.9);
+
+    border-radius:25px;
+
+    overflow:hidden;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 0 25px rgba(0,255,174,0.12);
+}
+
+.edit-header{
+
+    padding:20px 25px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00ffae22,
+            #00c3ff22
+        );
+
+    border-bottom:
+        1px solid rgba(255,255,255,0.08);
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    color:#00ffae;
+
+    text-shadow:
+        0 0 10px #00ffae;
+}
+
+.edit-body{
+    padding:30px;
+}
+
+.form-label{
+
+    color:#94a3b8;
+
+    font-weight:600;
+}
+
+.form-control{
+
+    background:#0f172a !important;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    color:#e2e8f0 !important;
+
+    border-radius:12px;
+
+    padding:12px;
+}
+
+.form-control:focus{
+
+    border-color:#00ffae;
+
+    box-shadow:
+        0 0 10px rgba(0,255,174,0.35);
+
+    background:#0f172a;
+}
+
+.btn-neon-green{
+
+    background:#00ffae;
+
+    border:none;
+
+    color:black;
+
+    font-weight:bold;
+
+    padding:12px 24px;
+
+    border-radius:12px;
+
+    transition:.3s;
+}
+
+.btn-neon-green:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 0 20px #00ffae;
+}
+
+.btn-neon-gray{
+
+    background:#1e293b;
+
+    border:none;
+
+    color:#e2e8f0;
+
+    padding:12px 24px;
+
+    border-radius:12px;
+
+    transition:.3s;
+}
+
+.btn-neon-gray:hover{
+
+    background:#334155;
+
+    color:white;
+}
+
+</style>
+
+<div class="edit-wrapper">
+
+    <div class="edit-card">
+
+        <div class="edit-header">
             ✏️ แก้ไขข้อมูล
         </div>
 
-        <div class="card-body">
+        <div class="edit-body">
 
-            <form method="post" action="/update/{{ row_id }}">
+            <form method="post"
+                  action="/update/{{ row_id }}">
 
                 <div class="row">
+
                     {% for i in range(11) %}
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Column {{ i }}</label>
-                        <input type="text" name="col{{ i }}" value="{{ row[i] }}" class="form-control">
+
+                    <div class="col-md-6 mb-4">
+
+                        <label class="form-label">
+                            Column {{ i }}
+                        </label>
+
+                        <input
+                            type="text"
+                            name="col{{ i }}"
+                            value="{{ row[i] }}"
+                            class="form-control"
+                        >
+
                     </div>
+
                     {% endfor %}
+
                 </div>
 
-                <button class="btn btn-success">💾 บันทึก</button>
-                <a href="/" class="btn btn-secondary">⬅️ กลับ</a>
+                <div class="d-flex gap-3">
+
+                    <button class="btn btn-neon-green">
+                        💾 บันทึก
+                    </button>
+
+                    <a href="/"
+                       class="btn btn-neon-gray">
+
+                       ⬅️ กลับ
+
+                    </a>
+
+                </div>
 
             </form>
 
         </div>
+
     </div>
 
 </div>
 
-</body>
-</html>
+{% endblock %}
