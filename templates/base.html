@@ -112,13 +112,7 @@ body::before{
 }
 
 .card-header{
-    background:
-        linear-gradient(
-            90deg,
-            #ff2f92,
-            #c43cff,
-            #7d5cff
-        );
+    background:#151B2D !important;
 
     color:white;
 
@@ -258,8 +252,7 @@ body::before{
 }
 
 .table thead{
-
-    background:#151B2D
+    background:#151B2D;
 }
 
 .table thead th{
@@ -361,15 +354,6 @@ body::before{
     backdrop-filter:blur(8px);
 }
 
-.progress{
-
-    background:#22242f;
-
-    border-radius:20px;
-
-    overflow:hidden;
-}
-
 #storage-box .progress{
     background:#22242f;
     border-radius:20px;
@@ -382,7 +366,7 @@ body::before{
     border-radius:999px;
 }
 
-/* สีตาม % */
+/* STORAGE COLORS */
 
 .neon-green{
     background:#00ff9f !important;
@@ -431,7 +415,6 @@ body::before{
 }
 
 .loading-box{
-
     text-align:center;
 }
 
@@ -526,6 +509,39 @@ body::before{
 
 document.addEventListener("DOMContentLoaded", function(){
 
+    const loading = document.getElementById("loading-screen");
+
+    // LINK LOADING
+    document.querySelectorAll("a").forEach(link => {
+
+        link.addEventListener("click", function(){
+
+            const href = this.getAttribute("href");
+
+            if(
+                href &&
+                !href.startsWith("#") &&
+                !href.startsWith("javascript")
+            ){
+                loading.style.display = "flex";
+            }
+
+        });
+
+    });
+
+    // FORM LOADING
+    document.querySelectorAll("form").forEach(form => {
+
+        form.addEventListener("submit", function(){
+
+            loading.style.display = "flex";
+
+        });
+
+    });
+
+    // STORAGE BAR COLOR
     let percent = {{ storage.percent_used }};
     let bar = document.getElementById("storage-bar");
 
