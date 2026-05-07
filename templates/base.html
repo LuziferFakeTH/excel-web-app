@@ -370,14 +370,42 @@ body::before{
     overflow:hidden;
 }
 
-.progress-bar{
+#storage-box .progress{
+    background:#22242f;
+    border-radius:20px;
+    overflow:hidden;
+    height:10px;
+}
 
-    background:
-        linear-gradient(
-            90deg,
-            #ff2f92,
-            #d946ef
-        );
+#storage-bar{
+    transition:0.4s;
+    border-radius:999px;
+}
+
+/* สีตาม % */
+
+.neon-green{
+    background:#00ff9f !important;
+
+    box-shadow:
+        0 0 8px #00ff9f,
+        0 0 15px #00ff9f;
+}
+
+.neon-yellow{
+    background:#ffe600 !important;
+
+    box-shadow:
+        0 0 8px #ffe600,
+        0 0 15px #ffe600;
+}
+
+.neon-red{
+    background:#ff3b3b !important;
+
+    box-shadow:
+        0 0 8px #ff3b3b,
+        0 0 15px #ff3b3b;
 }
 
 /* =========================
@@ -498,35 +526,25 @@ body::before{
 
 document.addEventListener("DOMContentLoaded", function(){
 
-    const loading = document.getElementById("loading-screen");
+    let percent = {{ storage.percent_used }};
+    let bar = document.getElementById("storage-bar");
 
-    document.querySelectorAll("a").forEach(link => {
+    if(bar){
 
-        link.addEventListener("click", function(){
+        if(percent < 30){
 
-            const href = this.getAttribute("href");
+            bar.classList.add("neon-green");
 
-            if(
-                href &&
-                !href.startsWith("#") &&
-                !href.startsWith("javascript")
-            ){
-                loading.style.display = "flex";
-            }
+        }else if(percent < 80){
 
-        });
+            bar.classList.add("neon-yellow");
 
-    });
+        }else{
 
-    document.querySelectorAll("form").forEach(form => {
+            bar.classList.add("neon-red");
+        }
 
-        form.addEventListener("submit", function(){
-
-            loading.style.display = "flex";
-
-        });
-
-    });
+    }
 
 });
 
