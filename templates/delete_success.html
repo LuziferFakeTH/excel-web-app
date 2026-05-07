@@ -1,84 +1,142 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>ลบสำเร็จ</title>
+{% extends "base.html" %}
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block content %}
 
-    <style>
-        body {
-            background: radial-gradient(circle at top, #020617, #000);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-family: sans-serif;
-        }
+<style>
 
-        .box {
-            text-align: center;
-            padding: 40px;
-            border-radius: 20px;
-            background: rgba(15, 23, 42, 0.8);
-            box-shadow: 0 0 30px rgba(255,0,0,0.3);
-        }
+.delete-wrapper{
+    min-height:100vh;
 
-        .icon {
-            font-size: 80px;
-            color: #ff3b3b;
-            text-shadow: 0 0 15px #ff3b3b;
-            animation: pop 0.5s ease;
-        }
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
 
-        @keyframes pop {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+.delete-box{
+    text-align:center;
 
-        .title {
-            font-size: 28px;
-            margin-top: 15px;
-            color: #ff3b3b;
-            text-shadow: 0 0 10px #ff3b3b;
-        }
+    padding:45px;
 
-        .btn-back {
-            margin-top: 25px;
-            background: transparent;
-            border: 1px solid #ff3b3b;
-            color: #ff3b3b;
-            padding: 10px 25px;
-            border-radius: 10px;
-            transition: 0.3s;
-        }
+    border-radius:25px;
 
-        .btn-back:hover {
-            background: #ff3b3b;
-            color: black;
-            box-shadow: 0 0 15px #ff3b3b;
-        }
-    </style>
-</head>
+    background:rgba(15,23,42,0.85);
 
-<body>
+    box-shadow:
+        0 0 30px rgba(255,0,0,0.25);
+
+    border:1px solid rgba(255,59,59,0.25);
+
+    backdrop-filter:blur(10px);
+}
+
+.delete-icon{
+    font-size:90px;
+
+    color:#ff3b3b;
+
+    text-shadow:
+        0 0 10px #ff3b3b,
+        0 0 25px #ff3b3b;
+
+    animation:pop .5s ease;
+}
+
+@keyframes pop{
+
+    0%{
+        transform:scale(0.5);
+        opacity:0;
+    }
+
+    100%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+}
+
+.delete-title{
+
+    margin-top:15px;
+
+    font-size:30px;
+
+    color:#ff3b3b;
+
+    text-shadow:
+        0 0 10px #ff3b3b;
+}
+
+.delete-sub{
+
+    margin-top:10px;
+
+    color:#94a3b8;
+
+    font-size:14px;
+}
+
+.btn-neon-red{
+
+    margin-top:25px;
+
+    padding:12px 28px;
+
+    border-radius:12px;
+
+    border:1px solid #ff3b3b;
+
+    color:#ff3b3b;
+
+    background:transparent;
+
+    transition:.3s;
+}
+
+.btn-neon-red:hover{
+
+    background:#ff3b3b;
+
+    color:black;
+
+    box-shadow:
+        0 0 15px #ff3b3b;
+}
+
+</style>
+
 <script>
+
 setTimeout(() => {
+
     window.location.href = "/files";
+
 }, 2000);
+
 </script>
-    
-<div class="box">
 
-    <div class="icon">✖</div>
+<div class="delete-wrapper">
 
-    <div class="title">ลบไฟล์สำเร็จแล้ว</div>
+    <div class="delete-box">
 
-    <a href="/files" class="btn btn-back">
-        ⬅️ กลับหน้ารายการไฟล์
-    </a>
+        <div class="delete-icon">
+            ✖
+        </div>
+
+        <div class="delete-title">
+            ลบไฟล์สำเร็จแล้ว
+        </div>
+
+        <div class="delete-sub">
+            กำลังกลับไปหน้ารายการไฟล์...
+        </div>
+
+        <a href="/files" class="btn btn-neon-red">
+            ⬅️ กลับหน้ารายการไฟล์
+        </a>
+
+    </div>
 
 </div>
 
-</body>
-</html>
+{% endblock %}
