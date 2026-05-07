@@ -1,27 +1,265 @@
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>รายละเอียดไฟล์</title>
-    <link rel="icon" type="image/png" href="/static/logo.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+{% block title %}รายละเอียดไฟล์{% endblock %}
 
-<body class="bg-light">
+{% block content %}
 
-<div class="container mt-5">
+<style>
 
-    <h2 class="mb-4 text-center">📄 รายละเอียดข้อมูลที่อัปโหลด</h2>
+body{
+    background:
+        radial-gradient(circle at top,
+        #2a0a1f,
+        #050505);
 
-    <div class="mb-3 d-flex justify-content-between">
-        <a href="/files" class="btn btn-secondary">⬅️ กลับ</a>
+    color:#f5f5f5;
+    font-family:'Prompt',sans-serif;
+}
+
+/* title */
+
+.page-title{
+
+    text-align:center;
+
+    font-size:38px;
+    font-weight:700;
+
+    margin-bottom:35px;
+
+    color:#ff66cc;
+
+    text-shadow:
+        0 0 10px rgba(255,102,204,0.7),
+        0 0 30px rgba(255,102,204,0.35);
+}
+
+/* top buttons */
+
+.top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:20px;
+}
+
+.cyber-btn{
+
+    padding:10px 22px;
+
+    border-radius:14px;
+
+    border:none;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    transition:0.3s;
+
+    letter-spacing:1px;
+}
+
+.btn-back{
+
+    background:
+        linear-gradient(
+            45deg,
+            #00d9ff,
+            #009dff
+        );
+
+    color:white;
+
+    box-shadow:
+        0 0 15px rgba(0,217,255,0.35);
+}
+
+.btn-back:hover{
+
+    transform:translateY(-3px);
+
+    color:white;
+
+    box-shadow:
+        0 0 25px rgba(0,217,255,0.7);
+}
+
+/* card */
+
+.cyber-card{
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20,20,20,0.95),
+            rgba(8,8,8,0.95)
+        );
+
+    border-radius:24px;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    overflow:hidden;
+
+    box-shadow:
+        0 0 25px rgba(255,102,204,0.12),
+        0 0 80px rgba(0,0,0,0.6);
+
+    backdrop-filter:blur(10px);
+}
+
+.cyber-card .card-body{
+    padding:25px;
+}
+
+/* table */
+
+.table{
+    margin:0;
+    color:#fff;
+    vertical-align:middle;
+}
+
+.table thead{
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff4da6,
+            #ff66cc
+        );
+}
+
+.table thead th{
+
+    border:none !important;
+
+    color:white;
+
+    font-size:14px;
+    font-weight:600;
+
+    text-align:center;
+
+    padding:16px 12px;
+
+    white-space:nowrap;
+}
+
+.table tbody tr{
+
+    background:rgba(255,255,255,0.02);
+
+    transition:0.25s;
+}
+
+.table tbody tr:hover{
+
+    background:rgba(255,102,204,0.12);
+
+    transform:scale(1.003);
+}
+
+.table td{
+
+    border-color:rgba(255,255,255,0.06) !important;
+
+    padding:14px 12px;
+
+    font-size:14px;
+
+    white-space:nowrap;
+}
+
+/* scrollbar */
+
+.table-responsive::-webkit-scrollbar{
+    height:10px;
+}
+
+.table-responsive::-webkit-scrollbar-track{
+    background:#111;
+    border-radius:20px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb{
+    background:#ff4da6;
+    border-radius:20px;
+
+    box-shadow:
+        0 0 10px rgba(255,77,166,0.5);
+}
+
+/* glow background */
+
+.bg-glow{
+
+    position:fixed;
+    inset:0;
+
+    overflow:hidden;
+    z-index:-1;
+}
+
+.glow{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    filter:blur(120px);
+
+    opacity:0.15;
+}
+
+.glow1{
+    width:300px;
+    height:300px;
+
+    background:#ff00aa;
+
+    top:-50px;
+    left:-50px;
+}
+
+.glow2{
+    width:350px;
+    height:350px;
+
+    background:#00d9ff;
+
+    bottom:-100px;
+    right:-100px;
+}
+
+</style>
+
+<div class="bg-glow">
+    <div class="glow glow1"></div>
+    <div class="glow glow2"></div>
+</div>
+
+<div class="container mt-5 mb-5">
+
+    <div class="page-title">
+        📄 รายละเอียดข้อมูลที่อัปโหลด
     </div>
 
-    <div class="card shadow">
+    <div class="top-bar">
+        <a href="/files" class="cyber-btn btn-back">
+            ⬅️ กลับหน้ารายการไฟล์
+        </a>
+    </div>
+
+    <div class="cyber-card">
+
         <div class="card-body table-responsive">
 
-            <table class="table table-bordered table-hover table-sm">
-                <thead class="table-dark">
+            <table class="table table-hover table-bordered table-sm align-middle">
+
+                <thead>
                     <tr>
                         <th>ชื่อเกม</th>
                         <th>แพ็ค</th>
@@ -38,21 +276,25 @@
                 </thead>
 
                 <tbody>
+
                     {% for row in rows %}
                     <tr>
+
                         {% for col in row %}
                         <td>{{ col }}</td>
                         {% endfor %}
+
                     </tr>
                     {% endfor %}
+
                 </tbody>
 
             </table>
 
         </div>
+
     </div>
 
 </div>
 
-</body>
-</html>
+{% endblock %}
