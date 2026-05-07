@@ -175,32 +175,65 @@ def files():
     page = int(request.args.get("page", 1))
     per_page = 20
 
+    filter_date = request.args.get("date", "")
+    filter_customer = request.args.get("customer", "")
+    filter_game = request.args.get("game", "")
+
     conn = get_db()
     cursor = conn.cursor()
 
-    # นับจำนวนทั้งหมด
-    cursor.execute("SELECT COUNT(*) FROM files")
+    # -------------------------
+    # WHERE dynamic filter
+    # -------------------------
+    query = """
+        SELECT id, customer, game, upload_date
+        FROM files
+        WHERE 1=1
+    """
+
+    params = []
+
+    if filter_date:
+        query += " AND DATE(upload_date) = %s"
+        params.append(filter_date)
+
+    if filter_customer:
+        query += " AND customer ILIKE %s"
+        params.append(f"%{filter_customer}%")
+
+    if filter_game:
+        query += " AND game ILIKE %s"
+        params.append(f"%{filter_game}%")
+
+    # -------------------------
+    # COUNT
+    # -------------------------
+    count_query = f"SELECT COUNT(*) FROM ({query}) AS sub"
+    cursor.execute(count_query, params)
     total_rows = cursor.fetchone()[0]
 
     total_pages = max(1, ceil(total_rows / per_page))
     offset = (page - 1) * per_page
 
-    # ดึงข้อมูล
-    cursor.execute("""
-        SELECT id, customer, game, upload_date
-        FROM files
-        ORDER BY id DESC
-        LIMIT %s OFFSET %s
-    """, (per_page, offset))
+    # -------------------------
+    # DATA
+    # -------------------------
+    query += " ORDER BY id DESC LIMIT %s OFFSET %s"
+    params.extend([per_page, offset])
 
+    cursor.execute(query, params)
     files_data = cursor.fetchall()
+
     conn.close()
 
     return render_template(
         "files.html",
         files=files_data,
         page=page,
-        total_pages=total_pages
+        total_pages=total_pages,
+        filter_date=filter_date,
+        filter_customer=filter_customer,
+        filter_game=filter_game
     )
 
 # ---------------------------
