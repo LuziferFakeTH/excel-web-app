@@ -1,23 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="th">
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Excel System{% endblock %}</title>
 
-    <title>Excel Data System</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
 
-    <!-- LOGO -->
-    <link rel="icon"
-          type="image/png"
-          href="/static/logo.png">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- BOOTSTRAP -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -25,166 +21,418 @@
    GLOBAL
 ========================= */
 
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
 body{
-    background:#0f172a;
-    color:#e2e8f0;
+    font-family:'Prompt',sans-serif;
+
+    background:
+        radial-gradient(circle at top,
+        #1b1028 0%,
+        #0a0710 45%,
+        #050507 100%);
+
+    color:#ffffff;
+
+    min-height:100vh;
+
+    overflow-x:hidden;
 }
 
 /* =========================
-   STORAGE BOX
+   BACKGROUND GLOW
 ========================= */
 
-#storage-box{
+body::before{
+    content:"";
+
     position:fixed;
+    inset:0;
 
-    top:10px;
-    right:15px;
+    background:
+        radial-gradient(circle at 20% 20%,
+        rgba(255,0,153,0.12),
+        transparent 25%),
 
-    width:190px;
+        radial-gradient(circle at 80% 10%,
+        rgba(140,0,255,0.10),
+        transparent 25%),
 
-    padding:12px;
+        radial-gradient(circle at 50% 100%,
+        rgba(0,225,255,0.08),
+        transparent 30%);
 
-    background:#111827;
+    z-index:-1;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.page-title{
+    font-size:38px;
+    font-weight:700;
+
+    color:#ff66cc;
+
+    text-shadow:
+        0 0 10px rgba(255,102,204,0.7),
+        0 0 25px rgba(255,102,204,0.5);
+
+    letter-spacing:1px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25,25,35,0.92),
+            rgba(12,12,18,0.95)
+        );
+
+    border:1px solid rgba(255,255,255,0.05);
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,0.55),
+        0 0 20px rgba(255,0,170,0.05);
+
+    backdrop-filter:blur(10px);
+}
+
+.card-header{
+    background:
+        linear-gradient(
+            90deg,
+            #ff2f92,
+            #c43cff,
+            #7d5cff
+        );
+
+    color:white;
+
+    font-weight:600;
+
+    border:none;
+
+    padding:16px 22px;
+
+    letter-spacing:0.5px;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.form-control{
+    background:#11131a;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    color:white;
 
     border-radius:14px;
 
+    padding:12px 15px;
+
+    transition:0.25s;
+}
+
+.form-control:focus{
+
+    background:#151821;
+
+    color:white;
+
+    border-color:#ff4fc3;
+
     box-shadow:
-        0 0 15px rgba(0,255,174,0.3);
-
-    z-index:9999;
-
-    border:1px solid rgba(0,255,174,0.2);
-}
-
-#storage-box .title{
-    font-weight:bold;
-    margin-bottom:5px;
-
-    color:#00ffae;
-
-    text-shadow:0 0 10px #00ffae;
-}
-
-#storage-box .progress{
-    background:#1e293b;
-    height:10px;
-}
-
-.neon-green{
-    background:#00ffae !important;
-    box-shadow:0 0 10px #00ffae;
-}
-
-.neon-yellow{
-    background:#ffe600 !important;
-    box-shadow:0 0 10px #ffe600;
-}
-
-.neon-red{
-    background:#ff3b3b !important;
-    box-shadow:0 0 10px #ff3b3b;
+        0 0 0 0.15rem rgba(255,79,195,0.18),
+        0 0 20px rgba(255,79,195,0.25);
 }
 
 /* =========================
-   CYBER LOADING
+   BUTTON
+========================= */
+
+.btn{
+    border:none;
+    border-radius:14px;
+
+    font-weight:500;
+
+    transition:0.25s ease;
+}
+
+/* MAIN BUTTON */
+
+.btn-primary,
+.btn-success{
+
+    background:
+        linear-gradient(
+            45deg,
+            #ff2f92,
+            #d946ef
+        );
+
+    color:white;
+}
+
+.btn-primary:hover,
+.btn-success:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(255,0,170,0.35);
+}
+
+/* SECONDARY */
+
+.btn-secondary{
+
+    background:#23252f;
+    color:#ddd;
+}
+
+.btn-secondary:hover{
+
+    background:#343746;
+    color:white;
+}
+
+/* DANGER */
+
+.btn-danger{
+
+    background:
+        linear-gradient(
+            45deg,
+            #ff3b3b,
+            #ff0066
+        );
+
+    color:white;
+}
+
+.btn-danger:hover{
+
+    box-shadow:
+        0 0 20px rgba(255,0,80,0.4);
+
+    transform:translateY(-2px);
+}
+
+/* WARNING */
+
+.btn-warning{
+
+    background:
+        linear-gradient(
+            45deg,
+            #ffb347,
+            #ffcc33
+        );
+
+    color:black;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table{
+    color:white;
+}
+
+.table thead{
+
+    background:#0d0f16;
+}
+
+.table thead th{
+
+    color:#ff66cc;
+
+    border:none;
+}
+
+.table tbody tr{
+
+    background:rgba(255,255,255,0.02);
+
+    transition:0.2s;
+}
+
+.table tbody tr:hover{
+
+    background:rgba(255,0,170,0.08);
+}
+
+.table td,
+.table th{
+    border-color:rgba(255,255,255,0.05);
+}
+
+/* =========================
+   PAGINATION
+========================= */
+
+.page-link{
+
+    background:#14161d;
+    border:none;
+
+    color:#ff66cc;
+
+    margin:0 3px;
+
+    border-radius:10px;
+}
+
+.page-item.active .page-link{
+
+    background:#ff2f92;
+    color:white;
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#0c0c12;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#ff2f92;
+    border-radius:10px;
+}
+
+/* =========================
+   STORAGE WIDGET
+========================= */
+
+#storage-box{
+
+    position:fixed;
+
+    top:15px;
+    right:15px;
+
+    width:210px;
+
+    padding:15px;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20,20,30,0.92),
+            rgba(10,10,15,0.95)
+        );
+
+    border:1px solid rgba(255,255,255,0.05);
+
+    box-shadow:
+        0 0 20px rgba(255,0,170,0.18);
+
+    z-index:9999;
+
+    backdrop-filter:blur(8px);
+}
+
+.progress{
+
+    background:#22242f;
+
+    border-radius:20px;
+
+    overflow:hidden;
+}
+
+.progress-bar{
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff2f92,
+            #d946ef
+        );
+}
+
+/* =========================
+   LOADING SCREEN
 ========================= */
 
 #loading-screen{
-    position: fixed;
-    inset: 0;
 
-    background:
-        radial-gradient(circle at center,
-        rgba(0,255,170,0.08),
-        rgba(0,0,0,0.95));
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
-
-    z-index: 999999;
-
-    overflow: hidden;
-
-    backdrop-filter: blur(5px);
-}
-
-#loading-screen::before{
-    content:"";
-
-    position:absolute;
+    position:fixed;
     inset:0;
 
-    background-image:
-        linear-gradient(rgba(0,255,170,0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,255,170,0.08) 1px, transparent 1px);
+    background:
+        radial-gradient(circle,
+        rgba(15,15,20,0.92),
+        rgba(0,0,0,0.98));
 
-    background-size:40px 40px;
+    display:none;
 
-    animation:gridMove 4s linear infinite;
-}
-
-@keyframes gridMove{
-    0%{
-        transform:translateY(0px);
-    }
-    100%{
-        transform:translateY(40px);
-    }
-}
-
-.cyber-container{
-    position:relative;
-
-    width:260px;
-    height:260px;
-
-    display:flex;
     align-items:center;
     justify-content:center;
+
+    z-index:999999;
 }
 
-.ring{
-    position:absolute;
+.loading-box{
 
-    border-radius:50%;
-
-    border:2px solid #00ffae;
-
-    box-shadow:
-        0 0 10px #00ffae,
-        inset 0 0 10px #00ffae;
-
-    animation:spin linear infinite;
+    text-align:center;
 }
 
-.ring1{
-    width:220px;
-    height:220px;
+.loading-ring{
 
-    border-top-color:transparent;
-
-    animation-duration:4s;
-}
-
-.ring2{
-    width:170px;
-    height:170px;
-
-    border-right-color:transparent;
-
-    animation-duration:3s;
-    animation-direction:reverse;
-}
-
-.ring3{
     width:120px;
     height:120px;
 
-    border-bottom-color:transparent;
+    border-radius:50%;
 
-    animation-duration:2s;
+    border:4px solid rgba(255,255,255,0.08);
+
+    border-top:4px solid #ff2f92;
+
+    animation:spin 1s linear infinite;
+
+    margin:auto;
+}
+
+.loading-text{
+
+    margin-top:20px;
+
+    color:#ff66cc;
+
+    letter-spacing:4px;
+
+    font-size:20px;
+
+    text-shadow:
+        0 0 10px rgba(255,0,170,0.7);
 }
 
 @keyframes spin{
@@ -193,65 +441,25 @@ body{
     }
 }
 
-.core{
-    width:70px;
-    height:70px;
+/* =========================
+   ANIMATION
+========================= */
 
-    border-radius:50%;
+.fade-up{
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:34px;
-
-    color:#00ffae;
-
-    background:rgba(0,255,174,0.08);
-
-    box-shadow:
-        0 0 20px #00ffae,
-        inset 0 0 20px #00ffae;
-
-    animation:pulse 1s infinite;
+    animation:fadeUp 0.5s ease;
 }
 
-@keyframes pulse{
-    0%{
-        transform:scale(1);
+@keyframes fadeUp{
+
+    from{
+        opacity:0;
+        transform:translateY(15px);
     }
-    50%{
-        transform:scale(1.1);
-    }
-    100%{
-        transform:scale(1);
-    }
-}
 
-.loading-text{
-    position:absolute;
-
-    bottom:-50px;
-
-    color:#00ffae;
-
-    font-size:22px;
-
-    letter-spacing:5px;
-
-    text-shadow:
-        0 0 5px #00ffae,
-        0 0 15px #00ffae;
-
-    animation:flicker 1s infinite alternate;
-}
-
-@keyframes flicker{
-    0%{
-        opacity:0.7;
-    }
-    100%{
+    to{
         opacity:1;
+        transform:translateY(0);
     }
 }
 
@@ -261,93 +469,30 @@ body{
 
 <body>
 
-<!-- =========================
-     STORAGE WIDGET
-========================= -->
-
-<div id="storage-box">
-
-    <div class="title">
-        💾 STORAGE
-    </div>
-
-    <div class="small text-end">
-        {{ storage.percent_used }}%
-    </div>
-
-    <div class="progress">
-
-        <div id="storage-bar"
-             class="progress-bar"
-             style="width: {{ storage.percent_used }}%;">
-        </div>
-
-    </div>
-
-    <div class="small text-end mt-1">
-        {{ storage.remaining_kb }} KB left
-    </div>
-
-</div>
-
-<!-- =========================
-     CYBER LOADING
-========================= -->
+<!-- LOADING -->
 
 <div id="loading-screen">
 
-    <div class="cyber-container">
+    <div class="loading-box">
 
-        <div class="ring ring1"></div>
-        <div class="ring ring2"></div>
-        <div class="ring ring3"></div>
-
-        <div class="core">
-            ⚡
-        </div>
+        <div class="loading-ring"></div>
 
         <div class="loading-text">
-            CYBER LOADING
+            LOADING
         </div>
 
     </div>
 
 </div>
 
-<!-- =========================
-     PAGE CONTENT
-========================= -->
+<div class="container py-5 fade-up">
 
 {% block content %}
 {% endblock %}
 
+</div>
+
 <script>
-
-/* STORAGE COLOR */
-
-document.addEventListener("DOMContentLoaded", function(){
-
-    const percent = Number("{{ storage.percent_used }}");
-
-    const bar = document.getElementById("storage-bar");
-
-    if(percent < 30){
-
-        bar.classList.add("neon-green");
-
-    }else if(percent < 80){
-
-        bar.classList.add("neon-yellow");
-
-    }else{
-
-        bar.classList.add("neon-red");
-
-    }
-
-});
-
-/* LOADING */
 
 document.addEventListener("DOMContentLoaded", function(){
 
@@ -357,7 +502,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
         link.addEventListener("click", function(){
 
-            const href = link.getAttribute("href");
+            const href = this.getAttribute("href");
 
             if(
                 href &&
