@@ -5,26 +5,31 @@
 {% block content %}
 
 <style>
-body{
-    background:
-        radial-gradient(circle at top,
-        #031b16,
-        #000000);
 
-    min-height:100vh;
+.fullscreen-success{
+
+    position:fixed;
+    inset:0;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
     overflow:hidden;
+
+    background:
+        radial-gradient(circle at top,
+        #031b16,
+        #000000);
 }
 
 /* particles */
-body::before{
+
+.fullscreen-success::before{
+
     content:"";
 
-    position:fixed;
+    position:absolute;
     inset:0;
 
     background-image:
@@ -38,9 +43,11 @@ body::before{
 }
 
 @keyframes moveGrid{
+
     0%{
         transform:translateY(0);
     }
+
     100%{
         transform:translateY(30px);
     }
@@ -51,6 +58,7 @@ body::before{
     position:relative;
 
     width:420px;
+
     padding:55px 40px;
 
     text-align:center;
@@ -76,7 +84,9 @@ body::before{
 }
 
 /* glow border */
+
 .success-box::before{
+
     content:"";
 
     position:absolute;
@@ -96,16 +106,20 @@ body::before{
 }
 
 @keyframes borderMove{
+
     0%{
         transform:rotate(0deg);
     }
+
     100%{
         transform:rotate(360deg);
     }
 }
 
 .inner{
+
     position:relative;
+
     z-index:2;
 }
 
@@ -123,6 +137,7 @@ body::before{
     justify-content:center;
 
     font-size:64px;
+
     color:#00ffae;
 
     background:
@@ -144,10 +159,12 @@ body::before{
 }
 
 @keyframes popIn{
+
     0%{
         transform:scale(0.3);
         opacity:0;
     }
+
     100%{
         transform:scale(1);
         opacity:1;
@@ -155,6 +172,7 @@ body::before{
 }
 
 @keyframes pulse{
+
     0%{
         box-shadow:
             0 0 15px #00ffae,
@@ -232,6 +250,7 @@ body::before{
 .btn-back:hover{
 
     background:#00ffae;
+
     color:#000;
 
     transform:translateY(-3px);
@@ -240,42 +259,53 @@ body::before{
         0 0 25px #00ffae;
 }
 
-/* auto redirect */
 .redirect{
+
     margin-top:18px;
+
     font-size:13px;
+
     color:#8fbfb0;
 }
+
 </style>
 
 <script>
+
 setTimeout(() => {
+
     window.location.href = "/";
+
 }, 2500);
+
 </script>
 
-<div class="success-box">
+<div class="fullscreen-success">
 
-    <div class="inner">
+    <div class="success-box">
 
-        <div class="checkmark">
-            ✔
-        </div>
+        <div class="inner">
 
-        <div class="title">
-            UPLOAD SUCCESS
-        </div>
+            <div class="checkmark">
+                ✔
+            </div>
 
-        <div class="subtitle">
-            ระบบอัปโหลดไฟล์เรียบร้อยแล้ว
-        </div>
+            <div class="title">
+                UPLOAD SUCCESS
+            </div>
 
-        <a href="/" class="btn-back">
-            ⬅ กลับหน้าหลัก
-        </a>
+            <div class="subtitle">
+                ระบบอัปโหลดไฟล์เรียบร้อยแล้ว
+            </div>
 
-        <div class="redirect">
-            Auto Redirect...
+            <a href="/" class="btn-back">
+                ⬅ กลับหน้าหลัก
+            </a>
+
+            <div class="redirect">
+                Auto Redirect...
+            </div>
+
         </div>
 
     </div>
