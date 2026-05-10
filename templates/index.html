@@ -12,153 +12,37 @@ label{
     color:#ffffff !important;
     font-weight:600;
     margin-bottom:6px;
-
-    text-shadow:
-        0 0 10px rgba(255,255,255,0.2);
+    text-shadow:0 0 8px rgba(255,255,255,0.15);
 }
 
 /* =========================
-   TITLE
+   POWERED BY
 ========================= */
 
-.main-title{
-
-    font-size:42px;
-    font-weight:700;
-
-    text-align:center;
-
-    color:#ff66cc;
-
-    text-shadow:
-        0 0 10px rgba(255,0,170,0.6),
-        0 0 25px rgba(255,0,170,0.4);
-
-    animation:titleGlow 2s infinite;
-}
-
-.sub-title{
-
-    text-align:center;
-
-    margin-top:10px;
-
-    color:#ddd;
-
-    letter-spacing:2px;
-
-    opacity:0.8;
-}
-
-@keyframes titleGlow{
-
-    0%{
-        text-shadow:
-            0 0 10px rgba(255,0,170,0.5),
-            0 0 25px rgba(255,0,170,0.3);
-    }
-
-    50%{
-        text-shadow:
-            0 0 18px rgba(255,0,170,0.9),
-            0 0 45px rgba(255,0,170,0.5);
-    }
-
-    100%{
-        text-shadow:
-            0 0 10px rgba(255,0,170,0.5),
-            0 0 25px rgba(255,0,170,0.3);
-    }
-}
-
-/* =========================
-   STORAGE BOX
-========================= */
-
-#storage-box{
+.powered-by{
 
     position:fixed;
 
-    top:15px;
-    right:15px;
-
-    width:220px;
-
-    padding:16px;
-
-    border-radius:18px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(20,20,35,0.95),
-            rgba(10,10,18,0.95)
-        );
-
-    border:1px solid rgba(255,255,255,0.06);
-
-    box-shadow:
-        0 0 20px rgba(255,0,170,0.2),
-        0 0 50px rgba(140,0,255,0.12);
+    left:20px;
+    bottom:15px;
 
     z-index:9999;
 
-    backdrop-filter:blur(10px);
-}
+    font-size:13px;
 
-.storage-title{
-
-    font-weight:700;
-
-    color:#ffffff;
-
-    margin-bottom:6px;
+    color:#ff66cc;
 
     letter-spacing:1px;
+
+    opacity:0.8;
+
+    text-shadow:
+        0 0 8px rgba(255,0,170,0.5);
 }
 
-#storage-box .progress{
-
-    height:10px;
-
-    background:#202030;
-
-    border-radius:999px;
-
-    overflow:hidden;
-}
-
-#storage-bar{
-
-    border-radius:999px;
-
-    transition:0.5s;
-}
-
-/* COLORS */
-
-.neon-green{
-    background:#00ff9f !important;
-
-    box-shadow:
-        0 0 10px #00ff9f,
-        0 0 25px #00ff9f;
-}
-
-.neon-yellow{
-    background:#ffe600 !important;
-
-    box-shadow:
-        0 0 10px #ffe600,
-        0 0 25px #ffe600;
-}
-
-.neon-red{
-    background:#ff3b3b !important;
-
-    box-shadow:
-        0 0 10px #ff3b3b,
-        0 0 25px #ff3b3b;
+.powered-by span{
+    color:#ffffff;
+    opacity:0.9;
 }
 
 /* =========================
@@ -178,37 +62,85 @@ label{
 
     background:
         radial-gradient(circle at center,
-        rgba(45,0,90,0.98),
-        rgba(5,5,20,1));
+        rgba(35,0,70,0.98),
+        rgba(0,0,0,1));
 }
 
-#gojo-domain::before{
+/* =========================
+   STARS
+========================= */
 
-    content:"";
+.stars,
+.stars2,
+.stars3{
 
     position:absolute;
     inset:0;
 
-    background-image:
-        radial-gradient(rgba(160,100,255,0.2) 1px, transparent 1px);
+    background-repeat:repeat;
 
-    background-size:40px 40px;
-
-    animation:spaceMove 6s linear infinite;
+    animation:starMove linear infinite;
 }
 
-@keyframes spaceMove{
+.stars{
+
+    background-image:
+        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+        radial-gradient(1px 1px at 100px 150px, #fff, transparent),
+        radial-gradient(2px 2px at 200px 80px, #a855f7, transparent),
+        radial-gradient(2px 2px at 300px 200px, #fff, transparent),
+        radial-gradient(1px 1px at 400px 120px, #60a5fa, transparent);
+
+    background-size:500px 500px;
+
+    animation-duration:80s;
+
+    opacity:0.7;
+}
+
+.stars2{
+
+    background-image:
+        radial-gradient(2px 2px at 50px 60px, #fff, transparent),
+        radial-gradient(2px 2px at 250px 300px, #c084fc, transparent),
+        radial-gradient(1px 1px at 450px 150px, #fff, transparent),
+        radial-gradient(2px 2px at 600px 400px, #93c5fd, transparent);
+
+    background-size:700px 700px;
+
+    animation-duration:120s;
+
+    opacity:0.5;
+}
+
+.stars3{
+
+    background-image:
+        radial-gradient(3px 3px at 150px 100px, #fff, transparent),
+        radial-gradient(2px 2px at 350px 250px, #f0abfc, transparent),
+        radial-gradient(2px 2px at 550px 500px, #fff, transparent);
+
+    background-size:900px 900px;
+
+    animation-duration:160s;
+
+    opacity:0.3;
+}
+
+@keyframes starMove{
 
     from{
         transform:translateY(0);
     }
 
     to{
-        transform:translateY(40px);
+        transform:translateY(-1000px);
     }
 }
 
-/* BLACK HOLE */
+/* =========================
+   BLACK HOLE
+========================= */
 
 .black-hole{
 
@@ -226,19 +158,55 @@ label{
 
     background:
         radial-gradient(circle,
-        #000 15%,
-        #140024 40%,
-        #5b21b6 70%,
+        #000 10%,
+        #12001f 35%,
+        #5b21b6 65%,
+        rgba(168,85,247,0.15) 80%,
         transparent 100%);
 
     box-shadow:
         0 0 50px #7c3aed,
-        0 0 150px rgba(124,58,237,0.9),
-        0 0 300px rgba(0,140,255,0.5);
+        0 0 120px rgba(124,58,237,0.9),
+        0 0 250px rgba(59,130,246,0.6);
 
     animation:
-        spinHole 3s linear infinite,
+        spinHole 4s linear infinite,
         pulseHole 2s ease infinite;
+}
+
+.space-ring{
+
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    width:420px;
+    height:420px;
+
+    transform:translate(-50%, -50%);
+
+    border-radius:50%;
+
+    border:2px solid rgba(168,85,247,0.2);
+
+    box-shadow:
+        0 0 30px rgba(168,85,247,0.5),
+        inset 0 0 30px rgba(96,165,250,0.2);
+
+    animation:
+        rotateRing 8s linear infinite;
+}
+
+@keyframes rotateRing{
+
+    from{
+        transform:translate(-50%, -50%) rotate(0deg);
+    }
+
+    to{
+        transform:translate(-50%, -50%) rotate(360deg);
+    }
 }
 
 @keyframes spinHole{
@@ -259,7 +227,7 @@ label{
     }
 
     50%{
-        filter:brightness(1.5);
+        filter:brightness(1.6);
     }
 
     100%{
@@ -267,13 +235,15 @@ label{
     }
 }
 
-/* TEXT */
+/* =========================
+   TEXT
+========================= */
 
 .domain-text{
 
     position:absolute;
 
-    top:72%;
+    top:73%;
     left:50%;
 
     transform:translateX(-50%);
@@ -286,13 +256,16 @@ label{
     font-size:48px;
     font-weight:800;
 
-    color:#d8b4fe;
+    letter-spacing:8px;
 
-    letter-spacing:6px;
+    color:#d8b4fe;
 
     text-shadow:
         0 0 20px #9333ea,
-        0 0 60px #7e22ce;
+        0 0 60px #7e22ce,
+        0 0 120px rgba(168,85,247,0.5);
+
+    animation:textPulse 2s infinite;
 }
 
 .domain-sub{
@@ -301,85 +274,41 @@ label{
 
     font-size:18px;
 
-    letter-spacing:4px;
+    letter-spacing:5px;
 
     color:#f5d0fe;
 
     opacity:0.9;
 }
 
-/* =========================
-   POWERED BY
-========================= */
+@keyframes textPulse{
 
-.powered-by{
+    0%{
+        opacity:0.8;
+    }
 
-    position:fixed;
+    50%{
+        opacity:1;
+    }
 
-    left:20px;
-    bottom:15px;
-
-    z-index:99999;
-
-    font-size:13px;
-
-    color:#ff66cc;
-
-    opacity:0.8;
-
-    text-shadow:
-        0 0 10px rgba(255,0,170,0.5);
-}
-
-.powered-by span{
-    color:#ffffff;
+    100%{
+        opacity:0.8;
+    }
 }
 
 </style>
-
-<!-- STORAGE -->
-
-<div id="storage-box">
-
-    <div class="storage-title">
-        💾 STORAGE
-    </div>
-
-    <div class="small text-end mb-1">
-        {{ storage.percent_used }}%
-    </div>
-
-    <div class="progress">
-
-        <div id="storage-bar"
-             class="progress-bar"
-             style="width: {{ storage.percent_used }}%;">
-        </div>
-
-    </div>
-
-    <div class="small text-end mt-2">
-        {{ storage.remaining_kb }} KB left
-    </div>
-
-    <div class="mt-3">
-
-        <button onclick="runVacuum()"
-                class="btn btn-danger w-100">
-
-            🧹 ล้าง Storage
-
-        </button>
-
-    </div>
-
-</div>
 
 <!-- GOJO DOMAIN -->
 
 <div id="gojo-domain">
 
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+
     <div class="black-hole"></div>
+
+    <div class="space-ring"></div>
 
     <div class="domain-text">
 
@@ -393,39 +322,58 @@ label{
 
     </div>
 
+    <!-- SOUND -->
+
     <audio id="domain-sound">
         <source src="/static/domain.mp3" type="audio/mpeg">
     </audio>
 
 </div>
 
+<!-- STORAGE -->
+
+<div id="storage-box">
+
+    <div style="font-weight:bold; margin-bottom:4px;">
+        💾 STORAGE
+    </div>
+
+    <div class="small text-end">
+        {{ storage.percent_used }}%
+    </div>
+
+    <div class="progress" style="height:8px;">
+
+        <div id="storage-bar"
+             class="progress-bar"
+             style="width: {{ storage.percent_used }}%;">
+        </div>
+
+    </div>
+
+    <div class="small text-end mt-1">
+        {{ storage.remaining_kb }} KB left
+    </div>
+
+    <div class="mt-2 text-center">
+
+        <button onclick="runVacuum()"
+                class="btn btn-sm w-100"
+                style="
+                    background:#ff3b3b;
+                    color:white;
+                    box-shadow:0 0 10px rgba(255,0,0,0.4);
+                ">
+
+            🧹 ล้าง Storage
+
+        </button>
+
+    </div>
+
+</div>
+
 <script>
-
-document.addEventListener("DOMContentLoaded", function(){
-
-    let percent = {{ storage.percent_used }};
-    let bar = document.getElementById("storage-bar");
-
-    if(bar){
-
-        if(percent < 30){
-
-            bar.classList.add("neon-green");
-
-        }else if(percent < 80){
-
-            bar.classList.add("neon-yellow");
-
-        }else{
-
-            bar.classList.add("neon-red");
-        }
-    }
-});
-
-/* =========================
-   VACUUM
-========================= */
 
 function runVacuum(){
 
@@ -438,24 +386,25 @@ function runVacuum(){
     }
 
     let confirmAction = confirm(
-        "⚠️ ระบบจะเข้าสู่โหมดล้าง Storage"
+        "⚠️ ระบบจะหยุดชั่วคราว\nยืนยันหรือไม่?"
     );
 
     if(!confirmAction) return;
 
+    // DOMAIN SHOW
+
     const domain = document.getElementById("gojo-domain");
-    const sound = document.getElementById("domain-sound");
 
     domain.style.display = "block";
 
-    if(sound){
+    // PLAY SOUND
 
-        sound.volume = 1;
+    const sound = document.getElementById("domain-sound");
 
-        sound.play().catch(err => {
-            console.log(err);
-        });
-    }
+    sound.volume = 1;
+    sound.play();
+
+    // RUN VACUUM
 
     setTimeout(() => {
 
@@ -479,112 +428,40 @@ function runVacuum(){
 
         });
 
-    }, 2500);
+    }, 4500);
 }
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    let percent = {{ storage.percent_used }};
+    let bar = document.getElementById("storage-bar");
+
+    if(bar){
+
+        if(percent < 30){
+
+            bar.classList.add("neon-green");
+
+        }else if(percent < 80){
+
+            bar.classList.add("neon-yellow");
+
+        }else{
+
+            bar.classList.add("neon-red");
+        }
+
+    }
+
+});
 
 </script>
 
 <div class="container mt-5">
 
-    <div class="main-title">
-        📊 Excel Data System
-    </div>
-
-    <div class="sub-title">
-        ⚡ Powered Database Management ⚡
-    </div>
-
-    <div class="mb-4 text-end mt-4">
-
-        <a href="/files" class="btn btn-info">
-            📂 ดูไฟล์ทั้งหมด
-        </a>
-
-    </div>
-
-    <!-- UPLOAD -->
-
-    <div class="card p-3 mb-4">
-
-        <div class="card-header">
-            📤 อัปโหลดไฟล์
-        </div>
-
-        <div class="card-body">
-
-            <form action="/upload"
-                  method="post"
-                  enctype="multipart/form-data">
-
-                <div class="row">
-
-                    <div class="col-md-6 mb-3">
-
-                        <label>เจ้าที่สั่ง</label>
-
-                        <input list="customer_list"
-                               name="customer"
-                               class="form-control"
-                               required>
-
-                        <datalist id="customer_list">
-
-                            <option value="S5 เจ้าเหลือง">
-                            <option value="S6 เจ้าแดง">
-                            <option value="เจ้า 3">
-                            <option value="เจ้า 4">
-                            <option value="เจ้า 5">
-                            <option value="CGC">
-
-                        </datalist>
-
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-
-                        <label>เกมส์</label>
-
-                        <input list="game_list"
-                               name="game"
-                               class="form-control"
-                               required>
-
-                        <datalist id="game_list">
-
-                            <option value="Call of duty">
-                            <option value="Honkai Starrail">
-                            <option value="Efootball Pes">
-                            <option value="Wuthering Wave">
-                            <option value="FC Mobile">
-                            <option value="Last War">
-                            <option value="Pokemon Go">
-                            <option value="Pokemon TCG">
-                            <option value="Zenless zone zero">
-
-                        </datalist>
-
-                    </div>
-
-                </div>
-
-                <div class="mb-3">
-
-                    <input type="file"
-                           name="file"
-                           class="form-control"
-                           required>
-
-                </div>
-
-                <button class="btn btn-success w-100">
-                    Upload
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
+    <h2 class="text-center mb-5">
+        📊 Excel Data System 📊
+    </h2>
 
     <!-- SEARCH -->
 
@@ -616,119 +493,7 @@ function runVacuum(){
 
     </div>
 
-    <!-- RESULTS -->
-
-    {% if results is defined %}
-
-        {% if results %}
-
-        <div class="card p-3">
-
-            <div class="card-header">
-                📄 ผลลัพธ์
-            </div>
-
-            <div class="card-body table-responsive">
-
-                <table class="table">
-
-                    <thead>
-
-                        <tr>
-                            <th>เจ้าที่สั่ง</th>
-                            <th>เกมส์</th>
-                            <th>วันที่</th>
-                            <th>แพ็ค</th>
-                            <th>จัดการ</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {% for r in results %}
-
-                        <tr>
-
-                            <td>{{ r[2] }}</td>
-                            <td>{{ r[3] }}</td>
-                            <td>{{ r[4] }}</td>
-                            <td>{{ r[5] }}</td>
-
-                            <td>
-
-                                <a href="/detail/{{ r[1] }}"
-                                   class="btn btn-sm btn-warning">
-
-                                   ✏️
-
-                                </a>
-
-                                <a href="/delete_file/{{ r[0] }}"
-                                   class="btn btn-sm btn-danger">
-
-                                   🗑️
-
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-        {% else %}
-
-        <!-- NOT FOUND -->
-
-        <div class="card p-5 text-center">
-
-            <div style="
-                font-size:90px;
-                color:#ff3b7a;
-
-                text-shadow:
-                    0 0 20px #ff0066,
-                    0 0 50px rgba(255,0,100,0.5);
-            ">
-                ⚠️
-            </div>
-
-            <h2 style="
-                color:#ff66cc;
-                margin-top:15px;
-
-                text-shadow:
-                    0 0 15px rgba(255,0,170,0.5);
-            ">
-                ไม่พบข้อมูลในฐานระบบ
-            </h2>
-
-            <p style="
-                color:#bbb;
-                margin-top:10px;
-                letter-spacing:1px;
-            ">
-                กรุณาตรวจสอบคำค้นหาอีกครั้ง
-            </p>
-
-        </div>
-
-        {% endif %}
-
-    {% endif %}
-
 </div>
-
-<!-- POWERED -->
 
 <div class="powered-by">
 
