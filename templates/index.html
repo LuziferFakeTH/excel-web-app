@@ -1,361 +1,106 @@
 {% extends "base.html" %}
 
-{% block title %}Excel System{% endblock %}
-
 {% block content %}
 
 <style>
 
-h2{
-    font-weight:700;
-    color:#ff66cc;
-
-    text-shadow:
-        0 0 10px rgba(255,102,178,0.5),
-        0 0 25px rgba(255,102,178,0.25);
-}
-
-.subtitle{
-    color:#b9b9c9;
-    margin-top:-20px;
-}
-
-/* STORAGE */
-
-#storage-box{
-    position:fixed;
-
-    top:15px;
-    right:15px;
-
-    width:220px;
-
-    padding:15px;
-
-    border-radius:18px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(20,20,30,0.95),
-            rgba(10,10,15,0.96)
-        );
-
-    border:1px solid rgba(255,255,255,0.05);
-
-    box-shadow:
-        0 0 25px rgba(255,0,170,0.12);
-
-    z-index:9999;
-
-    backdrop-filter:blur(10px);
-}
-
-.storage-title{
-    font-weight:700;
-    color:#fff;
-}
-
-.storage-percent{
-    color:#ccc;
-    font-size:13px;
-}
-
-#storage-box .progress{
-    background:#1c1f2b;
-    height:10px;
-    border-radius:999px;
-    overflow:hidden;
-}
-
-#storage-bar{
-    border-radius:999px;
-    transition:0.4s;
-}
-
-.neon-green{
-    background:#00ff9f !important;
-
-    box-shadow:
-        0 0 8px #00ff9f,
-        0 0 18px #00ff9f;
-}
-
-.neon-yellow{
-    background:#ffe600 !important;
-
-    box-shadow:
-        0 0 8px #ffe600,
-        0 0 18px #ffe600;
-}
-
-.neon-red{
-    background:#ff3b3b !important;
-
-    box-shadow:
-        0 0 8px #ff3b3b,
-        0 0 18px #ff3b3b;
-}
-
-/* VACUUM OVERLAY */
-
-#vacuum-overlay{
-
-    position:fixed;
-    inset:0;
-
-    background:
-        radial-gradient(circle,
-        rgba(10,10,15,0.95),
-        rgba(0,0,0,0.98));
-
-    display:none;
-
-    align-items:center;
-    justify-content:center;
-
-    z-index:999999;
-}
-
-.vacuum-box{
-    text-align:center;
-}
-
-.vacuum-icon{
-
-    width:130px;
-    height:130px;
-
-    margin:auto;
-
-    border-radius:50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(0,255,170,0.18),
-            rgba(0,255,170,0.02)
-        );
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    animation:
-        vacuumPulse 1.4s infinite;
-}
-
-.vacuum-icon img{
-
-    width:80px;
-    height:80px;
-
-    object-fit:contain;
-
-    animation:
-        spinLogo 2s linear infinite;
-}
-
-.vacuum-title{
-
-    margin-top:25px;
-
-    font-size:28px;
-    font-weight:700;
-
-    color:#00ffae;
-
-    text-shadow:
-        0 0 12px #00ffae;
-}
-
-.vacuum-sub{
-
-    margin-top:10px;
-
-    color:#9be8d0;
-
-    letter-spacing:1px;
-}
-
-.clean-bar{
-
-    width:260px;
-    height:10px;
-
-    margin:25px auto 0;
-
-    background:#1b1f2a;
-
-    border-radius:999px;
-
-    overflow:hidden;
-}
-
-.clean-fill{
-
-    width:0%;
-
-    height:100%;
-
-    background:
-        linear-gradient(
-            90deg,
-            #00ffae,
-            #00c3ff
-        );
-
-    box-shadow:
-        0 0 10px #00ffae;
-
-    animation:
-        cleanMove 2.5s linear infinite;
-}
-
-@keyframes cleanMove{
-
-    0%{
-        width:0%;
+    label {
+        color: #ffffff !important;
+        font-weight: 500;
+        margin-bottom: 6px;
+        text-shadow: 0 0 8px rgba(255,255,255,0.15);
     }
 
-    50%{
-        width:85%;
+    /* POWERED BY */
+
+    .powered-by{
+
+        position:fixed;
+
+        left:20px;
+        bottom:15px;
+
+        z-index:9999;
+
+        font-size:13px;
+
+        color:#ff66cc;
+
+        letter-spacing:1px;
+
+        opacity:0.8;
+
+        text-shadow:
+            0 0 8px rgba(255,0,170,0.5);
     }
 
-    100%{
-        width:100%;
+    .powered-by span{
+        color:#ffffff;
+        opacity:0.9;
     }
-}
-
-@keyframes vacuumPulse{
-
-    0%{
-        box-shadow:
-            0 0 15px rgba(0,255,170,0.25);
-    }
-
-    50%{
-        box-shadow:
-            0 0 35px rgba(0,255,170,0.5);
-    }
-
-    100%{
-        box-shadow:
-            0 0 15px rgba(0,255,170,0.25);
-    }
-}
-
-@keyframes spinLogo{
-    100%{
-        transform:rotate(360deg);
-    }
-}
-
-/* NOT FOUND */
-
-.not-found-box{
-
-    text-align:center;
-
-    padding:60px 30px;
-}
-
-.not-found-icon{
-
-    font-size:90px;
-
-    color:#ff3b7f;
-
-    text-shadow:
-        0 0 15px #ff3b7f,
-        0 0 35px rgba(255,0,120,0.4);
-}
-
-.not-found-title{
-
-    margin-top:20px;
-
-    font-size:30px;
-    font-weight:700;
-
-    color:#ff6ba3;
-}
-
-.not-found-sub{
-
-    margin-top:10px;
-
-    color:#b5b5c3;
-}
-
-/* RESULT TABLE */
-
-.result-table tbody tr:hover{
-    transform:none !important;
-}
 
 </style>
 
-<!-- VACUUM SCREEN -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-<div id="vacuum-overlay">
+    let percent = {{ storage.percent_used }};
+    let bar = document.getElementById("storage-bar");
 
-    <div class="vacuum-box">
+    if(bar){
 
-        <div class="vacuum-icon">
-            <img src="/static/logo.png">
-        </div>
+        if (percent < 30) {
 
-        <div class="vacuum-title">
-            CLEANING STORAGE
-        </div>
+            bar.classList.add("neon-green");
 
-        <div class="vacuum-sub">
-            กำลังจัดระเบียบฐานข้อมูล...
-        </div>
+        } else if (percent < 80) {
 
-        <div class="clean-bar">
-            <div class="clean-fill"></div>
-        </div>
+            bar.classList.add("neon-yellow");
 
-    </div>
+        } else {
 
-</div>
+            bar.classList.add("neon-red");
+        }
+
+    }
+
+});
+</script>
 
 <!-- STORAGE -->
-
 <div id="storage-box">
 
-    <div class="d-flex justify-content-between align-items-center mb-2">
-
-        <div class="storage-title">
-            💾 STORAGE
-        </div>
-
-        <div class="storage-percent">
-            {{ storage.percent_used }}%
-        </div>
-
+    <div style="font-weight: bold; margin-bottom: 4px;">
+        💾 STORAGE
     </div>
 
-    <div class="progress">
+    <div class="small text-end">
+        {{ storage.percent_used }}%
+    </div>
 
+    <div class="progress" style="height: 8px;">
         <div id="storage-bar"
              class="progress-bar"
              style="width: {{ storage.percent_used }}%;">
         </div>
-
     </div>
 
-    <div class="small text-end mt-2" style="color:#aaa;">
+    <div class="small text-end mt-1">
         {{ storage.remaining_kb }} KB left
     </div>
 
-    <div class="mt-3">
+    <div class="mt-2 text-center">
 
         <button onclick="runVacuum()"
-                class="btn btn-danger w-100">
+                class="btn btn-sm w-100"
+                style="
+                    background:#ff3b3b;
+                    color:white;
+                    box-shadow:0 0 10px rgba(255,0,0,0.4);
+                ">
+
             🧹 ล้าง Storage
+
         </button>
 
     </div>
@@ -364,35 +109,11 @@ h2{
 
 <script>
 
-document.addEventListener("DOMContentLoaded", function(){
-
-    let percent = {{ storage.percent_used }};
-    let bar = document.getElementById("storage-bar");
-
-    if(bar){
-
-        if(percent < 30){
-
-            bar.classList.add("neon-green");
-
-        }else if(percent < 80){
-
-            bar.classList.add("neon-yellow");
-
-        }else{
-
-            bar.classList.add("neon-red");
-        }
-
-    }
-
-});
-
-function runVacuum(){
+function runVacuum() {
 
     let pass = prompt("🔒 ใส่รหัสก่อนล้าง Storage:");
 
-    if(pass !== "081041"){
+    if (pass !== "081041") {
 
         alert("❌ รหัสไม่ถูกต้อง");
         return;
@@ -402,171 +123,189 @@ function runVacuum(){
         "⚠️ ระบบจะหยุดชั่วคราว\nยืนยันหรือไม่?"
     );
 
-    if(!confirmAction) return;
+    if (!confirmAction) return;
 
-    document.getElementById("vacuum-overlay").style.display = "flex";
+    const loading = document.getElementById("loading-screen");
+
+    if(loading){
+
+        loading.style.display = "flex";
+
+        const text = loading.querySelector(".loading-text");
+
+        if(text){
+
+            text.innerHTML = `
+                🧹 CLEANING STORAGE...
+                <br>
+                <span style="
+                    font-size:13px;
+                    color:#ccc;
+                    letter-spacing:1px;
+                ">
+                    กำลังจัดเรียงฐานข้อมูลใหม่
+                </span>
+            `;
+        }
+
+    }
 
     fetch("/vacuum?pass=" + pass)
 
-    .then(res => res.text())
+        .then(res => res.text())
 
-    .then(data => {
-
-        setTimeout(() => {
+        .then(data => {
 
             alert(data);
+
             location.reload();
 
-        }, 1800);
+        })
 
-    })
+        .catch(err => {
 
-    .catch(err => {
+            alert("❌ เกิดข้อผิดพลาด");
 
-        alert("❌ เกิดข้อผิดพลาด");
-        location.reload();
+            location.reload();
 
-    });
-
+        });
 }
 
 </script>
 
-<div class="text-center mb-5">
+<div class="container mt-5">
 
-    <h2>
+    <h2 class="text-center mb-5">
         📊 Excel Data System 📊
     </h2>
 
-    <div class="subtitle">
-        ⚡ Powered By MissSir.John ⚡
+    <div class="mb-3 text-end">
+
+        <a href="/files" class="btn btn-info">
+            📂 ดูไฟล์ทั้งหมด
+        </a>
+
     </div>
 
-</div>
+    <!-- Upload -->
 
-<div class="mb-4 text-end">
+    <div class="card p-3 mb-4">
 
-    <a href="/files" class="btn btn-primary">
-        📂 ดูไฟล์ทั้งหมด
-    </a>
+        <div class="card-header">
+            📤 อัปโหลดไฟล์
+        </div>
 
-</div>
+        <div class="card-body">
 
-<!-- UPLOAD -->
+            <form action="/upload"
+                  method="post"
+                  enctype="multipart/form-data">
 
-<div class="card p-3 mb-4">
+                <div class="row">
 
-    <div class="card-header">
-        📤 อัปโหลดไฟล์
-    </div>
+                    <div class="col-md-6 mb-3">
 
-    <div class="card-body">
+                        <label>
+                            เจ้าที่สั่ง
+                        </label>
 
-        <form action="/upload"
-              method="post"
-              enctype="multipart/form-data">
+                        <input list="customer_list"
+                               name="customer"
+                               class="form-control"
+                               required>
 
-            <div class="row">
+                        <datalist id="customer_list">
 
-                <div class="col-md-6 mb-3">
+                            <option value="S5 เจ้าเหลือง">
+                            <option value="S6 เจ้าแดง">
+                            <option value="เจ้า 3">
+                            <option value="เจ้า 4">
+                            <option value="เจ้า 5">
+                            <option value="CGC">
 
-                    <label class="mb-2">
-                        เจ้าที่สั่ง
-                    </label>
+                        </datalist>
 
-                    <input list="customer_list"
-                           name="customer"
-                           class="form-control"
-                           required>
+                    </div>
 
-                    <datalist id="customer_list">
-                        <option value="S5 เจ้าเหลือง">
-                        <option value="S6 เจ้าแดง">
-                        <option value="เจ้า 3">
-                        <option value="เจ้า 4">
-                        <option value="เจ้า 5">
-                        <option value="CGC">
-                    </datalist>
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            เกมส์
+                        </label>
+
+                        <input list="game_list"
+                               name="game"
+                               class="form-control"
+                               required>
+
+                        <datalist id="game_list">
+
+                            <option value="Call of duty">
+                            <option value="Honkai Starrail">
+                            <option value="Efootball Pes">
+                            <option value="Wuthering Wave">
+                            <option value="FC Mobile">
+                            <option value="Last War">
+                            <option value="Pokemon Go">
+                            <option value="Pokemon TCG">
+                            <option value="Zenless zone zero">
+
+                        </datalist>
+
+                    </div>
 
                 </div>
 
-                <div class="col-md-6 mb-3">
+                <div class="mb-3">
 
-                    <label class="mb-2">
-                        เกมส์
-                    </label>
-
-                    <input list="game_list"
-                           name="game"
+                    <input type="file"
+                           name="file"
                            class="form-control"
                            required>
 
-                    <datalist id="game_list">
-                        <option value="Call of duty">
-                        <option value="Honkai Starrail">
-                        <option value="Efootball Pes">
-                        <option value="Wuthering Wave">
-                        <option value="FC Mobile">
-                        <option value="Last War">
-                        <option value="Pokemon Go">
-                        <option value="Pokemon TCG">
-                        <option value="Zenless zone zero">
-                    </datalist>
-
                 </div>
 
-            </div>
+                <button class="btn btn-success w-100">
+                    Upload
+                </button>
 
-            <div class="mb-3">
+            </form>
 
-                <input type="file"
-                       name="file"
-                       class="form-control"
+        </div>
+
+    </div>
+
+    <!-- Search -->
+
+    <div class="card p-3 mb-4">
+
+        <div class="card-header">
+            🔍 ค้นหาข้อมูล
+        </div>
+
+        <div class="card-body">
+
+            <form action="/search"
+                  method="get"
+                  class="d-flex">
+
+                <input type="text"
+                       name="q"
+                       class="form-control me-2"
+                       placeholder="พิมพ์คำค้น..."
                        required>
 
-            </div>
+                <button class="btn btn-primary">
+                    ค้นหา
+                </button>
 
-            <button class="btn btn-success w-100">
-                Upload
-            </button>
+            </form>
 
-        </form>
-
-    </div>
-
-</div>
-
-<!-- SEARCH -->
-
-<div class="card p-3 mb-4">
-
-    <div class="card-header">
-        🔍 ค้นหาข้อมูล
-    </div>
-
-    <div class="card-body">
-
-        <form action="/search"
-              method="get"
-              class="d-flex">
-
-            <input type="text"
-                   name="q"
-                   class="form-control me-2"
-                   placeholder="พิมพ์คำค้น..."
-                   required>
-
-            <button class="btn btn-primary">
-                ค้นหา
-            </button>
-
-        </form>
+        </div>
 
     </div>
 
-</div>
-
-<!-- RESULTS -->
+<!-- Results -->
 
 {% if results is defined %}
 
@@ -580,10 +319,9 @@ function runVacuum(){
 
         <div class="card-body table-responsive">
 
-            <table class="table result-table">
+            <table class="table">
 
                 <thead>
-
                     <tr>
                         <th>เจ้าที่สั่ง</th>
                         <th>เกมส์</th>
@@ -591,7 +329,6 @@ function runVacuum(){
                         <th>แพ็ค</th>
                         <th>จัดการ</th>
                     </tr>
-
                 </thead>
 
                 <tbody>
@@ -609,12 +346,16 @@ function runVacuum(){
 
                             <a href="/detail/{{ r[1] }}"
                                class="btn btn-sm btn-warning">
+
                                ✏️
+
                             </a>
 
                             <a href="/delete_file/{{ r[0] }}"
                                class="btn btn-sm btn-danger">
+
                                🗑️
+
                             </a>
 
                         </td>
@@ -633,28 +374,48 @@ function runVacuum(){
 
     {% else %}
 
-    <div class="card">
+    <!-- NOT FOUND -->
 
-        <div class="not-found-box">
+    <div class="card p-4 text-center">
 
-            <div class="not-found-icon">
-                ⚠️
-            </div>
-
-            <div class="not-found-title">
-                ไม่พบข้อมูลในฐานระบบ
-            </div>
-
-            <div class="not-found-sub">
-                กรุณาตรวจสอบคำค้นหาอีกครั้ง
-            </div>
-
+        <div style="
+            font-size:80px;
+            color:#ff3b3b;
+            text-shadow:
+                0 0 10px #ff3b3b,
+                0 0 20px #ff0066;
+        ">
+            ⚠️
         </div>
+
+        <h3 style="
+            color:#ff5c8a;
+            margin-top:15px;
+            text-shadow:
+                0 0 10px rgba(255,0,120,0.6);
+        ">
+            ไม่พบข้อมูลในฐานระบบ
+        </h3>
+
+        <p style="color:#aaa;">
+            กรุณาตรวจสอบคำค้นหาอีกครั้ง
+        </p>
 
     </div>
 
     {% endif %}
 
 {% endif %}
+
+</div>
+
+<!-- POWERED BY -->
+
+<div class="powered-by">
+
+    ⚡ Powered by
+    <span>MissSir.John</span>
+
+</div>
 
 {% endblock %}
