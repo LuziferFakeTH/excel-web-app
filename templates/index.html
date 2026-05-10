@@ -12,7 +12,9 @@ label{
     color:#ffffff !important;
     font-weight:600;
     margin-bottom:6px;
-    text-shadow:0 0 8px rgba(255,255,255,0.15);
+
+    text-shadow:
+        0 0 10px rgba(255,255,255,0.15);
 }
 
 /* =========================
@@ -41,6 +43,7 @@ label{
 }
 
 .powered-by span{
+
     color:#ffffff;
     opacity:0.9;
 }
@@ -62,11 +65,31 @@ label{
 
     background:
         radial-gradient(circle at center,
-        rgba(35,0,70,0.98),
+        rgba(20,0,40,0.98),
         rgba(0,0,0,1));
+
+    animation:
+        domainFlash 2s ease infinite;
 }
 
-/* STARS */
+@keyframes domainFlash{
+
+    0%{
+        filter:brightness(1);
+    }
+
+    50%{
+        filter:brightness(1.2);
+    }
+
+    100%{
+        filter:brightness(1);
+    }
+}
+
+/* =========================
+   STARS
+========================= */
 
 .stars,
 .stars2,
@@ -93,7 +116,7 @@ label{
 
     animation-duration:80s;
 
-    opacity:0.7;
+    opacity:0.8;
 }
 
 .stars2{
@@ -136,7 +159,47 @@ label{
     }
 }
 
-/* BLACK HOLE */
+/* =========================
+   SCREEN CRACK
+========================= */
+
+.cracks{
+
+    position:absolute;
+    inset:0;
+
+    background:
+        repeating-linear-gradient(
+            130deg,
+            transparent 0px,
+            transparent 20px,
+            rgba(255,255,255,0.03) 21px,
+            transparent 22px
+        );
+
+    opacity:0.25;
+
+    animation:crackFlash 0.15s infinite;
+}
+
+@keyframes crackFlash{
+
+    0%{
+        opacity:0.08;
+    }
+
+    50%{
+        opacity:0.22;
+    }
+
+    100%{
+        opacity:0.08;
+    }
+}
+
+/* =========================
+   BLACK HOLE
+========================= */
 
 .black-hole{
 
@@ -145,8 +208,8 @@ label{
     top:50%;
     left:50%;
 
-    width:320px;
-    height:320px;
+    width:340px;
+    height:340px;
 
     transform:translate(-50%, -50%);
 
@@ -177,14 +240,14 @@ label{
     top:50%;
     left:50%;
 
-    width:420px;
-    height:420px;
+    width:460px;
+    height:460px;
 
     transform:translate(-50%, -50%);
 
     border-radius:50%;
 
-    border:2px solid rgba(168,85,247,0.2);
+    border:2px solid rgba(168,85,247,0.25);
 
     box-shadow:
         0 0 30px rgba(168,85,247,0.5),
@@ -192,6 +255,26 @@ label{
 
     animation:
         rotateRing 8s linear infinite;
+}
+
+.space-ring2{
+
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    width:560px;
+    height:560px;
+
+    transform:translate(-50%, -50%);
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    animation:
+        rotateRingReverse 15s linear infinite;
 }
 
 @keyframes rotateRing{
@@ -202,6 +285,17 @@ label{
 
     to{
         transform:translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes rotateRingReverse{
+
+    from{
+        transform:translate(-50%, -50%) rotate(360deg);
+    }
+
+    to{
+        transform:translate(-50%, -50%) rotate(0deg);
     }
 }
 
@@ -231,7 +325,66 @@ label{
     }
 }
 
-/* TEXT */
+/* =========================
+   LOGO ABSORB
+========================= */
+
+.logo-absorb{
+
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    width:130px;
+
+    transform:translate(-50%, -50%);
+
+    z-index:10;
+
+    animation:
+        absorbLogo 4s ease forwards;
+
+    filter:
+        drop-shadow(0 0 20px #ffffff);
+}
+
+@keyframes absorbLogo{
+
+    0%{
+
+        transform:
+            translate(-50%, -50%)
+            scale(1)
+            rotate(0deg);
+
+        opacity:1;
+    }
+
+    70%{
+
+        transform:
+            translate(-50%, -50%)
+            scale(0.4)
+            rotate(720deg);
+
+        opacity:1;
+    }
+
+    100%{
+
+        transform:
+            translate(-50%, -50%)
+            scale(0)
+            rotate(1440deg);
+
+        opacity:0;
+    }
+}
+
+/* =========================
+   TEXT
+========================= */
 
 .domain-text{
 
@@ -247,7 +400,7 @@ label{
 
 .domain-title{
 
-    font-size:48px;
+    font-size:58px;
     font-weight:800;
 
     letter-spacing:8px;
@@ -266,13 +419,55 @@ label{
 
     margin-top:15px;
 
-    font-size:18px;
+    font-size:20px;
 
     letter-spacing:5px;
 
     color:#f5d0fe;
 
     opacity:0.9;
+}
+
+.purple-finish{
+
+    margin-top:25px;
+
+    font-size:72px;
+
+    font-weight:900;
+
+    color:#c084fc;
+
+    opacity:0;
+
+    transform:scale(0.5);
+
+    text-shadow:
+        0 0 20px #c084fc,
+        0 0 60px #9333ea;
+}
+
+.show-purple{
+
+    animation:purpleBlast 1.6s forwards;
+}
+
+@keyframes purpleBlast{
+
+    0%{
+        opacity:0;
+        transform:scale(0.3);
+    }
+
+    50%{
+        opacity:1;
+        transform:scale(1.3);
+    }
+
+    100%{
+        opacity:1;
+        transform:scale(1);
+    }
 }
 
 @keyframes textPulse{
@@ -290,6 +485,24 @@ label{
     }
 }
 
+/* =========================
+   SHAKE
+========================= */
+
+.shake-screen{
+
+    animation:shakeScreen 0.08s infinite;
+}
+
+@keyframes shakeScreen{
+
+    0%{ transform:translate(2px,1px); }
+    25%{ transform:translate(-2px,-1px); }
+    50%{ transform:translate(2px,-2px); }
+    75%{ transform:translate(-1px,2px); }
+    100%{ transform:translate(1px,-1px); }
+}
+
 </style>
 
 <!-- GOJO DOMAIN -->
@@ -300,9 +513,15 @@ label{
     <div class="stars2"></div>
     <div class="stars3"></div>
 
-    <div class="black-hole"></div>
+    <div class="cracks"></div>
 
     <div class="space-ring"></div>
+    <div class="space-ring2"></div>
+
+    <div class="black-hole"></div>
+
+    <img src="/static/logo.png"
+         class="logo-absorb">
 
     <div class="domain-text">
 
@@ -312,6 +531,13 @@ label{
 
         <div class="domain-sub">
             CLEANING STORAGE...
+        </div>
+
+        <div id="purple-finish"
+             class="purple-finish">
+
+            虚式 茈
+
         </div>
 
     </div>
@@ -387,11 +613,26 @@ function runVacuum(){
 
     domain.style.display = "block";
 
+    document.body.classList.add("shake-screen");
+
+    // SOUND
     const sound = document.getElementById("domain-sound");
 
     sound.volume = 1;
-    sound.play();
 
+    sound.play().catch(() => {});
+
+    // SHOW PURPLE
+    setTimeout(() => {
+
+        document
+            .getElementById("purple-finish")
+            .classList
+            .add("show-purple");
+
+    }, 3200);
+
+    // VACUUM
     setTimeout(() => {
 
         fetch("/vacuum?pass=" + pass)
@@ -400,13 +641,20 @@ function runVacuum(){
 
         .then(data => {
 
-            alert(data);
+            document.body.classList.remove("shake-screen");
 
-            location.reload();
+            setTimeout(() => {
+
+                alert(data);
+                location.reload();
+
+            }, 1000);
 
         })
 
         .catch(err => {
+
+            document.body.classList.remove("shake-screen");
 
             alert("❌ เกิดข้อผิดพลาด");
 
@@ -614,16 +862,12 @@ document.addEventListener("DOMContentLoaded", function(){
 
                                 <a href="/detail/{{ r[1] }}"
                                    class="btn btn-sm btn-warning">
-
                                    ✏️
-
                                 </a>
 
                                 <a href="/delete_file/{{ r[0] }}"
                                    class="btn btn-sm btn-danger">
-
                                    🗑️
-
                                 </a>
 
                             </td>
