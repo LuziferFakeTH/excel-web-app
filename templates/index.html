@@ -39,6 +39,275 @@
         opacity:0.9;
     }
 
+    /* =========================
+       GOJO DOMAIN
+    ========================= */
+
+    #gojo-domain{
+
+        position:fixed;
+        inset:0;
+
+        display:none;
+
+        align-items:center;
+        justify-content:center;
+        flex-direction:column;
+
+        overflow:hidden;
+
+        z-index:999999999;
+
+        background:
+            radial-gradient(circle at center,
+            rgba(80,0,140,0.35),
+            rgba(0,0,0,0.98));
+    }
+
+    .domain-bg{
+
+        position:absolute;
+        inset:-50%;
+
+        background:
+            repeating-radial-gradient(
+                circle,
+                rgba(150,0,255,0.06) 0px,
+                rgba(150,0,255,0.02) 5px,
+                transparent 12px
+            );
+
+        animation:
+            rotateBg 18s linear infinite;
+    }
+
+    @keyframes rotateBg{
+
+        100%{
+            transform:rotate(360deg);
+        }
+    }
+
+    .domain-kanji{
+
+        position:absolute;
+
+        top:80px;
+
+        font-size:110px;
+
+        color:#f0d9ff;
+
+        writing-mode:vertical-rl;
+
+        text-shadow:
+            0 0 10px #c084fc,
+            0 0 30px #9333ea;
+
+        opacity:0.9;
+
+        animation:
+            floatKanji 3s ease-in-out infinite;
+    }
+
+    @keyframes floatKanji{
+
+        0%{
+            transform:translateY(0px);
+        }
+
+        50%{
+            transform:translateY(-10px);
+        }
+
+        100%{
+            transform:translateY(0px);
+        }
+    }
+
+    .black-hole{
+
+        position:relative;
+
+        width:220px;
+        height:220px;
+
+        border-radius:50%;
+
+        background:
+            radial-gradient(circle,
+            #000 20%,
+            #1b0033 55%,
+            #7c3aed 100%);
+
+        box-shadow:
+            0 0 40px #7c3aed,
+            0 0 120px rgba(124,58,237,0.8),
+            inset 0 0 60px #000;
+
+        animation:
+            spinHole 4s linear infinite,
+            pulseHole 2s infinite ease-in-out;
+
+        z-index:5;
+    }
+
+    .black-hole::before{
+
+        content:"";
+
+        position:absolute;
+        inset:-25px;
+
+        border-radius:50%;
+
+        border:3px solid rgba(192,132,252,0.3);
+
+        animation:
+            spinRing 2s linear infinite;
+    }
+
+    .black-hole::after{
+
+        content:"";
+
+        position:absolute;
+        inset:-55px;
+
+        border-radius:50%;
+
+        border:2px dashed rgba(255,255,255,0.15);
+
+        animation:
+            spinReverse 8s linear infinite;
+    }
+
+    .energy-ring{
+
+        position:absolute;
+
+        border-radius:50%;
+
+        border:2px solid rgba(168,85,247,0.18);
+
+        animation:
+            expandRing 3s linear infinite;
+    }
+
+    .ring1{
+        width:320px;
+        height:320px;
+    }
+
+    .ring2{
+        width:520px;
+        height:520px;
+        animation-delay:1s;
+    }
+
+    .ring3{
+        width:760px;
+        height:760px;
+        animation-delay:2s;
+    }
+
+    .domain-title{
+
+        margin-top:45px;
+
+        font-size:42px;
+        font-weight:700;
+
+        letter-spacing:6px;
+
+        color:#f3e8ff;
+
+        text-shadow:
+            0 0 10px #c084fc,
+            0 0 30px #7c3aed,
+            0 0 60px rgba(124,58,237,0.8);
+
+        animation:
+            textPulse 2s infinite;
+    }
+
+    .domain-sub{
+
+        margin-top:10px;
+
+        font-size:18px;
+
+        letter-spacing:4px;
+
+        color:#d8b4fe;
+
+        opacity:0.9;
+    }
+
+    @keyframes spinHole{
+
+        100%{
+            transform:rotate(360deg);
+        }
+    }
+
+    @keyframes pulseHole{
+
+        0%{
+            transform:scale(1);
+        }
+
+        50%{
+            transform:scale(1.08);
+        }
+
+        100%{
+            transform:scale(1);
+        }
+    }
+
+    @keyframes spinRing{
+
+        100%{
+            transform:rotate(360deg);
+        }
+    }
+
+    @keyframes spinReverse{
+
+        100%{
+            transform:rotate(-360deg);
+        }
+    }
+
+    @keyframes expandRing{
+
+        0%{
+            transform:scale(0.6);
+            opacity:0.8;
+        }
+
+        100%{
+            transform:scale(1.5);
+            opacity:0;
+        }
+    }
+
+    @keyframes textPulse{
+
+        0%{
+            opacity:0.6;
+        }
+
+        50%{
+            opacity:1;
+        }
+
+        100%{
+            opacity:0.6;
+        }
+    }
+
 </style>
 
 <script>
@@ -67,7 +336,40 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+<!-- =========================
+     GOJO DOMAIN
+========================= -->
+
+<div id="gojo-domain">
+
+    <audio id="domain-sound">
+        <source src="/static/domain.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="domain-bg"></div>
+
+    <div class="energy-ring ring1"></div>
+    <div class="energy-ring ring2"></div>
+    <div class="energy-ring ring3"></div>
+
+    <div class="black-hole"></div>
+
+    <div class="domain-kanji">
+        領域展開
+    </div>
+
+    <div class="domain-title">
+        CLEANING STORAGE
+    </div>
+
+    <div class="domain-sub">
+        Unlimited Void
+    </div>
+
+</div>
+
 <!-- STORAGE -->
+
 <div id="storage-box">
 
     <div style="font-weight: bold; margin-bottom: 4px;">
@@ -120,34 +422,26 @@ function runVacuum() {
     }
 
     let confirmAction = confirm(
-        "⚠️ ระบบจะหยุดชั่วคราว\nยืนยันหรือไม่?"
+        "⚠️ เปิดอาณาเขตล้าง Storage ?"
     );
 
     if (!confirmAction) return;
 
-    const loading = document.getElementById("loading-screen");
+    // DOMAIN UI
 
-    if(loading){
+    const domain = document.getElementById("gojo-domain");
 
-        loading.style.display = "flex";
+    domain.style.display = "flex";
 
-        const text = loading.querySelector(".loading-text");
+    // PLAY SOUND
 
-        if(text){
+    const sound = document.getElementById("domain-sound");
 
-            text.innerHTML = `
-                🧹 CLEANING STORAGE...
-                <span style="
-                    font-size:13px;
-                    color:#ccc;
-                    letter-spacing:1px;
-                ">
-                    กำลังจัดเรียงฐานข้อมูลใหม่
-                </span>
-            `;
-        }
+    sound.volume = 1;
 
-    }
+    sound.play();
+
+    // VACUUM
 
     fetch("/vacuum?pass=" + pass)
 
@@ -155,9 +449,13 @@ function runVacuum() {
 
         .then(data => {
 
-            alert(data);
+            setTimeout(() => {
 
-            location.reload();
+                alert(data);
+
+                location.reload();
+
+            }, 5000);
 
         })
 
@@ -372,8 +670,6 @@ function runVacuum() {
     </div>
 
     {% else %}
-
-    <!-- NOT FOUND -->
 
     <div class="card p-4 text-center">
 
