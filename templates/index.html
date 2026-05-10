@@ -66,9 +66,7 @@ label{
         rgba(0,0,0,1));
 }
 
-/* =========================
-   STARS
-========================= */
+/* STARS */
 
 .stars,
 .stars2,
@@ -138,9 +136,7 @@ label{
     }
 }
 
-/* =========================
-   BLACK HOLE
-========================= */
+/* BLACK HOLE */
 
 .black-hole{
 
@@ -235,9 +231,7 @@ label{
     }
 }
 
-/* =========================
-   TEXT
-========================= */
+/* TEXT */
 
 .domain-text{
 
@@ -322,8 +316,6 @@ label{
 
     </div>
 
-    <!-- SOUND -->
-
     <audio id="domain-sound">
         <source src="/static/domain.mp3" type="audio/mpeg">
     </audio>
@@ -391,20 +383,14 @@ function runVacuum(){
 
     if(!confirmAction) return;
 
-    // DOMAIN SHOW
-
     const domain = document.getElementById("gojo-domain");
 
     domain.style.display = "block";
-
-    // PLAY SOUND
 
     const sound = document.getElementById("domain-sound");
 
     sound.volume = 1;
     sound.play();
-
-    // RUN VACUUM
 
     setTimeout(() => {
 
@@ -462,6 +448,102 @@ document.addEventListener("DOMContentLoaded", function(){
     <h2 class="text-center mb-5">
         📊 Excel Data System 📊
     </h2>
+
+    <div class="mb-3 text-end">
+
+        <a href="/files" class="btn btn-info">
+            📂 ดูไฟล์ทั้งหมด
+        </a>
+
+    </div>
+
+    <!-- UPLOAD -->
+
+    <div class="card p-3 mb-4">
+
+        <div class="card-header">
+            📤 อัปโหลดไฟล์
+        </div>
+
+        <div class="card-body">
+
+            <form action="/upload"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            เจ้าที่สั่ง
+                        </label>
+
+                        <input list="customer_list"
+                               name="customer"
+                               class="form-control"
+                               required>
+
+                        <datalist id="customer_list">
+
+                            <option value="S5 เจ้าเหลือง">
+                            <option value="S6 เจ้าแดง">
+                            <option value="เจ้า 3">
+                            <option value="เจ้า 4">
+                            <option value="เจ้า 5">
+                            <option value="CGC">
+
+                        </datalist>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>
+                            เกมส์
+                        </label>
+
+                        <input list="game_list"
+                               name="game"
+                               class="form-control"
+                               required>
+
+                        <datalist id="game_list">
+
+                            <option value="Call of duty">
+                            <option value="Honkai Starrail">
+                            <option value="Efootball Pes">
+                            <option value="Wuthering Wave">
+                            <option value="FC Mobile">
+                            <option value="Last War">
+                            <option value="Pokemon Go">
+                            <option value="Pokemon TCG">
+                            <option value="Zenless zone zero">
+
+                        </datalist>
+
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <input type="file"
+                           name="file"
+                           class="form-control"
+                           required>
+
+                </div>
+
+                <button class="btn btn-success w-100">
+                    Upload
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
 
     <!-- SEARCH -->
 
