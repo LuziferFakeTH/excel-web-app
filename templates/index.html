@@ -475,9 +475,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
                     <div class="col-md-6 mb-3">
 
-                        <label>
-                            เจ้าที่สั่ง
-                        </label>
+                        <label>เจ้าที่สั่ง</label>
 
                         <input list="customer_list"
                                name="customer"
@@ -499,9 +497,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
                     <div class="col-md-6 mb-3">
 
-                        <label>
-                            เกมส์
-                        </label>
+                        <label>เกมส์</label>
 
                         <input list="game_list"
                                name="game"
@@ -574,6 +570,108 @@ document.addEventListener("DOMContentLoaded", function(){
         </div>
 
     </div>
+
+    <!-- RESULTS -->
+
+    {% if results is defined %}
+
+        {% if results %}
+
+        <div class="card p-3">
+
+            <div class="card-header">
+                📄 ผลลัพธ์
+            </div>
+
+            <div class="card-body table-responsive">
+
+                <table class="table">
+
+                    <thead>
+
+                        <tr>
+                            <th>เจ้าที่สั่ง</th>
+                            <th>เกมส์</th>
+                            <th>วันที่</th>
+                            <th>แพ็ค</th>
+                            <th>จัดการ</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for r in results %}
+
+                        <tr>
+
+                            <td>{{ r[2] }}</td>
+                            <td>{{ r[3] }}</td>
+                            <td>{{ r[4] }}</td>
+                            <td>{{ r[5] }}</td>
+
+                            <td>
+
+                                <a href="/detail/{{ r[1] }}"
+                                   class="btn btn-sm btn-warning">
+
+                                   ✏️
+
+                                </a>
+
+                                <a href="/delete_file/{{ r[0] }}"
+                                   class="btn btn-sm btn-danger">
+
+                                   🗑️
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="card p-4 text-center">
+
+            <div style="
+                font-size:80px;
+                color:#ff3b3b;
+                text-shadow:
+                    0 0 10px #ff3b3b,
+                    0 0 20px #ff0066;
+            ">
+                ⚠️
+            </div>
+
+            <h3 style="
+                color:#ff5c8a;
+                margin-top:15px;
+                text-shadow:
+                    0 0 10px rgba(255,0,120,0.6);
+            ">
+                ไม่พบข้อมูลในฐานระบบ
+            </h3>
+
+            <p style="color:#aaa;">
+                กรุณาตรวจสอบคำค้นหาอีกครั้ง
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    {% endif %}
 
 </div>
 
