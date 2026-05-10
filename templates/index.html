@@ -4,375 +4,278 @@
 
 <style>
 
-    label {
-        color: #ffffff !important;
-        font-weight: 500;
-        margin-bottom: 6px;
-        text-shadow: 0 0 8px rgba(255,255,255,0.15);
+/* =========================
+   LABEL
+========================= */
+
+label{
+    color:#ffffff !important;
+    font-weight:600;
+    margin-bottom:6px;
+
+    text-shadow:
+        0 0 8px rgba(255,255,255,0.15);
+}
+
+/* =========================
+   POWERED BY
+========================= */
+
+.powered-by{
+
+    position:fixed;
+
+    left:22px;
+    bottom:18px;
+
+    z-index:99999;
+
+    font-size:13px;
+
+    color:#ff66cc;
+
+    letter-spacing:1px;
+
+    opacity:0.85;
+
+    text-shadow:
+        0 0 8px rgba(255,0,170,0.6),
+        0 0 15px rgba(255,0,170,0.3);
+
+    animation:pulseText 2s infinite;
+}
+
+.powered-by span{
+    color:#ffffff;
+}
+
+@keyframes pulseText{
+
+    0%{
+        opacity:0.7;
     }
 
-    /* POWERED BY */
-
-    .powered-by{
-
-        position:fixed;
-
-        left:20px;
-        bottom:15px;
-
-        z-index:9999;
-
-        font-size:13px;
-
-        color:#ff66cc;
-
-        letter-spacing:1px;
-
-        opacity:0.8;
-
-        text-shadow:
-            0 0 8px rgba(255,0,170,0.5);
+    50%{
+        opacity:1;
     }
 
-    .powered-by span{
-        color:#ffffff;
-        opacity:0.9;
+    100%{
+        opacity:0.7;
+    }
+}
+
+/* =========================
+   GOJO DOMAIN
+========================= */
+
+#gojo-domain{
+
+    position:fixed;
+    inset:0;
+
+    z-index:999999;
+
+    display:none;
+
+    overflow:hidden;
+
+    background:
+        radial-gradient(circle at center,
+        rgba(60,0,120,0.95) 0%,
+        rgba(5,5,20,0.98) 60%,
+        #000 100%);
+}
+
+/* moving particles */
+
+#gojo-domain::before{
+
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background-image:
+        radial-gradient(rgba(140,0,255,0.18) 1px, transparent 1px);
+
+    background-size:35px 35px;
+
+    animation:spaceMove 8s linear infinite;
+}
+
+@keyframes spaceMove{
+
+    from{
+        transform:translateY(0);
     }
 
-    /* =========================
-       GOJO DOMAIN
-    ========================= */
+    to{
+        transform:translateY(35px);
+    }
+}
 
-    #gojo-domain{
+/* BLACK HOLE */
 
-        position:fixed;
-        inset:0;
+.black-hole{
 
-        display:none;
+    position:absolute;
 
-        align-items:center;
-        justify-content:center;
-        flex-direction:column;
+    top:50%;
+    left:50%;
 
-        overflow:hidden;
+    width:260px;
+    height:260px;
 
-        z-index:999999999;
+    transform:translate(-50%, -50%);
 
-        background:
-            radial-gradient(circle at center,
-            rgba(80,0,140,0.35),
-            rgba(0,0,0,0.98));
+    border-radius:50%;
+
+    background:
+        radial-gradient(circle,
+        #000 20%,
+        #240046 55%,
+        rgba(120,0,255,0.6) 75%,
+        transparent 100%);
+
+    box-shadow:
+        0 0 40px rgba(160,0,255,0.9),
+        0 0 100px rgba(120,0,255,0.8),
+        0 0 180px rgba(0,195,255,0.5);
+
+    animation:
+        blackHoleSpin 3s linear infinite,
+        blackHolePulse 2s ease infinite;
+}
+
+@keyframes blackHoleSpin{
+
+    from{
+        transform:translate(-50%, -50%) rotate(0deg);
     }
 
-    .domain-bg{
-
-        position:absolute;
-        inset:-50%;
-
-        background:
-            repeating-radial-gradient(
-                circle,
-                rgba(150,0,255,0.06) 0px,
-                rgba(150,0,255,0.02) 5px,
-                transparent 12px
-            );
-
-        animation:
-            rotateBg 18s linear infinite;
+    to{
+        transform:translate(-50%, -50%) rotate(360deg);
     }
+}
 
-    @keyframes rotateBg{
+@keyframes blackHolePulse{
 
-        100%{
-            transform:rotate(360deg);
-        }
-    }
-
-    .domain-kanji{
-
-        position:absolute;
-
-        top:80px;
-
-        font-size:110px;
-
-        color:#f0d9ff;
-
-        writing-mode:vertical-rl;
-
-        text-shadow:
-            0 0 10px #c084fc,
-            0 0 30px #9333ea;
-
-        opacity:0.9;
-
-        animation:
-            floatKanji 3s ease-in-out infinite;
-    }
-
-    @keyframes floatKanji{
-
-        0%{
-            transform:translateY(0px);
-        }
-
-        50%{
-            transform:translateY(-10px);
-        }
-
-        100%{
-            transform:translateY(0px);
-        }
-    }
-
-    .black-hole{
-
-        position:relative;
-
-        width:220px;
-        height:220px;
-
-        border-radius:50%;
-
-        background:
-            radial-gradient(circle,
-            #000 20%,
-            #1b0033 55%,
-            #7c3aed 100%);
-
+    0%{
         box-shadow:
-            0 0 40px #7c3aed,
-            0 0 120px rgba(124,58,237,0.8),
-            inset 0 0 60px #000;
-
-        animation:
-            spinHole 4s linear infinite,
-            pulseHole 2s infinite ease-in-out;
-
-        z-index:5;
+            0 0 40px rgba(160,0,255,0.8),
+            0 0 100px rgba(120,0,255,0.7);
     }
 
-    .black-hole::before{
-
-        content:"";
-
-        position:absolute;
-        inset:-25px;
-
-        border-radius:50%;
-
-        border:3px solid rgba(192,132,252,0.3);
-
-        animation:
-            spinRing 2s linear infinite;
+    50%{
+        box-shadow:
+            0 0 70px rgba(160,0,255,1),
+            0 0 180px rgba(120,0,255,1);
     }
 
-    .black-hole::after{
+    100%{
+        box-shadow:
+            0 0 40px rgba(160,0,255,0.8),
+            0 0 100px rgba(120,0,255,0.7);
+    }
+}
 
-        content:"";
+/* DOMAIN TEXT */
 
-        position:absolute;
-        inset:-55px;
+.domain-text{
 
-        border-radius:50%;
+    position:absolute;
 
-        border:2px dashed rgba(255,255,255,0.15);
+    top:72%;
+    left:50%;
 
-        animation:
-            spinReverse 8s linear infinite;
+    transform:translateX(-50%);
+
+    text-align:center;
+}
+
+.domain-title{
+
+    font-size:42px;
+    font-weight:700;
+
+    letter-spacing:5px;
+
+    color:#c084fc;
+
+    text-shadow:
+        0 0 15px #a855f7,
+        0 0 35px #7e22ce,
+        0 0 70px #9333ea;
+
+    animation:flicker 1.5s infinite;
+}
+
+.domain-sub{
+
+    margin-top:14px;
+
+    font-size:18px;
+
+    color:#d8b4fe;
+
+    letter-spacing:3px;
+
+    text-shadow:
+        0 0 10px rgba(255,255,255,0.4);
+}
+
+@keyframes flicker{
+
+    0%{
+        opacity:0.8;
     }
 
-    .energy-ring{
-
-        position:absolute;
-
-        border-radius:50%;
-
-        border:2px solid rgba(168,85,247,0.18);
-
-        animation:
-            expandRing 3s linear infinite;
+    50%{
+        opacity:1;
     }
 
-    .ring1{
-        width:320px;
-        height:320px;
+    100%{
+        opacity:0.8;
+    }
+}
+
+/* DOMAIN FLASH */
+
+.domain-flash{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        radial-gradient(circle,
+        rgba(180,120,255,0.18),
+        transparent 70%);
+
+    animation:flashPulse 2s infinite;
+}
+
+@keyframes flashPulse{
+
+    0%{
+        opacity:0.3;
     }
 
-    .ring2{
-        width:520px;
-        height:520px;
-        animation-delay:1s;
+    50%{
+        opacity:1;
     }
 
-    .ring3{
-        width:760px;
-        height:760px;
-        animation-delay:2s;
+    100%{
+        opacity:0.3;
     }
-
-    .domain-title{
-
-        margin-top:45px;
-
-        font-size:42px;
-        font-weight:700;
-
-        letter-spacing:6px;
-
-        color:#f3e8ff;
-
-        text-shadow:
-            0 0 10px #c084fc,
-            0 0 30px #7c3aed,
-            0 0 60px rgba(124,58,237,0.8);
-
-        animation:
-            textPulse 2s infinite;
-    }
-
-    .domain-sub{
-
-        margin-top:10px;
-
-        font-size:18px;
-
-        letter-spacing:4px;
-
-        color:#d8b4fe;
-
-        opacity:0.9;
-    }
-
-    @keyframes spinHole{
-
-        100%{
-            transform:rotate(360deg);
-        }
-    }
-
-    @keyframes pulseHole{
-
-        0%{
-            transform:scale(1);
-        }
-
-        50%{
-            transform:scale(1.08);
-        }
-
-        100%{
-            transform:scale(1);
-        }
-    }
-
-    @keyframes spinRing{
-
-        100%{
-            transform:rotate(360deg);
-        }
-    }
-
-    @keyframes spinReverse{
-
-        100%{
-            transform:rotate(-360deg);
-        }
-    }
-
-    @keyframes expandRing{
-
-        0%{
-            transform:scale(0.6);
-            opacity:0.8;
-        }
-
-        100%{
-            transform:scale(1.5);
-            opacity:0;
-        }
-    }
-
-    @keyframes textPulse{
-
-        0%{
-            opacity:0.6;
-        }
-
-        50%{
-            opacity:1;
-        }
-
-        100%{
-            opacity:0.6;
-        }
-    }
+}
 
 </style>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    let percent = {{ storage.percent_used }};
-    let bar = document.getElementById("storage-bar");
-
-    if(bar){
-
-        if (percent < 30) {
-
-            bar.classList.add("neon-green");
-
-        } else if (percent < 80) {
-
-            bar.classList.add("neon-yellow");
-
-        } else {
-
-            bar.classList.add("neon-red");
-        }
-
-    }
-
-});
-</script>
-
-<!-- =========================
-     GOJO DOMAIN
-========================= -->
-
-<div id="gojo-domain">
-
-    <audio id="domain-sound">
-        <source src="/static/domain.mp3" type="audio/mpeg">
-    </audio>
-
-    <div class="domain-bg"></div>
-
-    <div class="energy-ring ring1"></div>
-    <div class="energy-ring ring2"></div>
-    <div class="energy-ring ring3"></div>
-
-    <div class="black-hole"></div>
-
-    <div class="domain-kanji">
-        領域展開
-    </div>
-
-    <div class="domain-title">
-        CLEANING STORAGE
-    </div>
-
-    <div class="domain-sub">
-        Unlimited Void
-    </div>
-
-</div>
-
 <!-- STORAGE -->
-
 <div id="storage-box">
 
-    <div style="font-weight: bold; margin-bottom: 4px;">
+    <div style="font-weight:bold; margin-bottom:4px;">
         💾 STORAGE
     </div>
 
@@ -380,11 +283,13 @@ document.addEventListener("DOMContentLoaded", function () {
         {{ storage.percent_used }}%
     </div>
 
-    <div class="progress" style="height: 8px;">
+    <div class="progress" style="height:8px;">
+
         <div id="storage-bar"
              class="progress-bar"
-             style="width: {{ storage.percent_used }}%;">
+             style="width:{{ storage.percent_used }}%;">
         </div>
+
     </div>
 
     <div class="small text-end mt-1">
@@ -396,12 +301,14 @@ document.addEventListener("DOMContentLoaded", function () {
         <button onclick="runVacuum()"
                 class="btn btn-sm w-100"
                 style="
-                    background:#ff3b3b;
+                    background:#7e22ce;
                     color:white;
-                    box-shadow:0 0 10px rgba(255,0,0,0.4);
+                    box-shadow:
+                        0 0 12px rgba(168,85,247,0.7),
+                        0 0 25px rgba(120,0,255,0.4);
                 ">
 
-            🧹 ล้าง Storage
+            🌀 Domain Clean Storage
 
         </button>
 
@@ -409,53 +316,104 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </div>
 
+<!-- DOMAIN EXPANSION -->
+
+<div id="gojo-domain">
+
+    <div class="domain-flash"></div>
+
+    <div class="black-hole"></div>
+
+    <div class="domain-text">
+
+        <div class="domain-title">
+            DOMAIN EXPANSION
+        </div>
+
+        <div class="domain-sub">
+            CLEANING STORAGE...
+        </div>
+
+    </div>
+
+    <!-- SOUND -->
+    <audio id="domain-sound">
+        <source src="/static/domain.mp3" type="audio/mpeg">
+    </audio>
+
+</div>
+
 <script>
 
-function runVacuum() {
+document.addEventListener("DOMContentLoaded", function () {
+
+    let percent = {{ storage.percent_used }};
+    let bar = document.getElementById("storage-bar");
+
+    if(bar){
+
+        if(percent < 30){
+
+            bar.classList.add("neon-green");
+
+        }else if(percent < 80){
+
+            bar.classList.add("neon-yellow");
+
+        }else{
+
+            bar.classList.add("neon-red");
+        }
+    }
+});
+
+/* =========================
+   RUN VACUUM
+========================= */
+
+function runVacuum(){
 
     let pass = prompt("🔒 ใส่รหัสก่อนล้าง Storage:");
 
-    if (pass !== "081041") {
+    if(pass !== "081041"){
 
         alert("❌ รหัสไม่ถูกต้อง");
         return;
     }
 
     let confirmAction = confirm(
-        "⚠️ เปิดอาณาเขตล้าง Storage ?"
+        "⚠️ DOMAIN EXPANSION ?\nระบบจะเข้าสู่โหมดล้าง Storage"
     );
 
-    if (!confirmAction) return;
-
-    // DOMAIN UI
+    if(!confirmAction) return;
 
     const domain = document.getElementById("gojo-domain");
-
-    domain.style.display = "flex";
-
-    // PLAY SOUND
-
     const sound = document.getElementById("domain-sound");
 
-    sound.volume = 1;
+    domain.style.display = "block";
 
-    sound.play();
+    // play sound
+    if(sound){
 
-    // VACUUM
+        sound.volume = 1;
 
-    fetch("/vacuum?pass=" + pass)
+        sound.play().catch(err => {
+            console.log(err);
+        });
+    }
+
+    // delay before vacuum
+    setTimeout(() => {
+
+        fetch("/vacuum?pass=" + pass)
 
         .then(res => res.text())
 
         .then(data => {
 
-            setTimeout(() => {
+            alert(data);
 
-                alert(data);
-
-                location.reload();
-
-            }, 5000);
+            location.reload();
 
         })
 
@@ -466,6 +424,8 @@ function runVacuum() {
             location.reload();
 
         });
+
+    }, 2500);
 }
 
 </script>
@@ -502,9 +462,7 @@ function runVacuum() {
 
                     <div class="col-md-6 mb-3">
 
-                        <label>
-                            เจ้าที่สั่ง
-                        </label>
+                        <label>เจ้าที่สั่ง</label>
 
                         <input list="customer_list"
                                name="customer"
@@ -526,9 +484,7 @@ function runVacuum() {
 
                     <div class="col-md-6 mb-3">
 
-                        <label>
-                            เกมส์
-                        </label>
+                        <label>เกมส์</label>
 
                         <input list="game_list"
                                name="game"
@@ -572,139 +528,9 @@ function runVacuum() {
 
     </div>
 
-    <!-- Search -->
-
-    <div class="card p-3 mb-4">
-
-        <div class="card-header">
-            🔍 ค้นหาข้อมูล
-        </div>
-
-        <div class="card-body">
-
-            <form action="/search"
-                  method="get"
-                  class="d-flex">
-
-                <input type="text"
-                       name="q"
-                       class="form-control me-2"
-                       placeholder="พิมพ์คำค้น..."
-                       required>
-
-                <button class="btn btn-primary">
-                    ค้นหา
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-
-<!-- Results -->
-
-{% if results is defined %}
-
-    {% if results %}
-
-    <div class="card p-3">
-
-        <div class="card-header">
-            📄 ผลลัพธ์
-        </div>
-
-        <div class="card-body table-responsive">
-
-            <table class="table">
-
-                <thead>
-                    <tr>
-                        <th>เจ้าที่สั่ง</th>
-                        <th>เกมส์</th>
-                        <th>วันที่</th>
-                        <th>แพ็ค</th>
-                        <th>จัดการ</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    {% for r in results %}
-
-                    <tr>
-
-                        <td>{{ r[2] }}</td>
-                        <td>{{ r[3] }}</td>
-                        <td>{{ r[4] }}</td>
-                        <td>{{ r[5] }}</td>
-
-                        <td>
-
-                            <a href="/detail/{{ r[1] }}"
-                               class="btn btn-sm btn-warning">
-
-                               ✏️
-
-                            </a>
-
-                            <a href="/delete_file/{{ r[0] }}"
-                               class="btn btn-sm btn-danger">
-
-                               🗑️
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-    {% else %}
-
-    <div class="card p-4 text-center">
-
-        <div style="
-            font-size:80px;
-            color:#ff3b3b;
-            text-shadow:
-                0 0 10px #ff3b3b,
-                0 0 20px #ff0066;
-        ">
-            ⚠️
-        </div>
-
-        <h3 style="
-            color:#ff5c8a;
-            margin-top:15px;
-            text-shadow:
-                0 0 10px rgba(255,0,120,0.6);
-        ">
-            ไม่พบข้อมูลในฐานระบบ
-        </h3>
-
-        <p style="color:#aaa;">
-            กรุณาตรวจสอบคำค้นหาอีกครั้ง
-        </p>
-
-    </div>
-
-    {% endif %}
-
-{% endif %}
-
 </div>
 
-<!-- POWERED BY -->
+<!-- POWERED -->
 
 <div class="powered-by">
 
