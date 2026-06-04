@@ -69,9 +69,20 @@ def init_db():
     """)
 
     conn.commit()
+    cursor.close()
     conn.close()
 
-init_db()
+
+# ---------------------------
+# INITIALIZE DATABASE
+# ---------------------------
+try:
+    init_db()
+    print("✅ Database initialized")
+except Exception as e:
+    print("❌ Database initialization failed")
+    print(e)
+
 
 # ---------------------------
 # HOME
@@ -79,7 +90,10 @@ init_db()
 @app.route("/")
 def index():
     storage = get_storage_info()
-    return render_template("index.html", storage=storage)
+    return render_template(
+        "index.html",
+        storage=storage
+    )
 
 # ---------------------------
 # UPLOAD
