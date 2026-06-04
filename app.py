@@ -101,35 +101,136 @@ def index():
 @app.route("/upload", methods=["POST"])
 def upload():
 
+    print("========== UPLOAD START ==========")
+
     try:
-
-        print("UPLOAD START")
-
+        # รับไฟล์
         file = request.files["file"]
         customer = request.form["customer"]
         game = request.form["game"]
 
-        print("FILE =", file.filename)
+        print(f"FILE = {file.filename}")
+        print(f"CUSTOMER = {customer}")
+        print(f"GAME = {game}")
 
+        # อ่าน Excel
         df = pd.read_excel(file, dtype=str)
 
-        print("EXCEL OK")
+        print("EXCEL READ OK")
 
+        df_data = df.iloc[:, 0:11].fillna("")
+
+        print(f"ROWS = {len(df_data)}")
+
+        # เชื่อม DB
         conn = get_db()
 
-        print("DB OK")
+        print("DB CONNECT OK")
 
         cursor = conn.cursor()
 
-        return "PASS"
+        thai_tz = pytz.timezone("Asia/Bangkok")
+
+        upload_date = datetime.now(thai_tz).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+
+        file_label = (
+            f"{customer} > {game} > {upload_date}"
+        )
+
+        # เพิ่มไฟล์
+        cursor.execute("""
+            INSERT INTO files
+            (
+                customer,
+                game,
+                file_label,
+                upload_date
+            )
+            VALUES
+            (
+                %s,
+                %s,
+                %s,
+                %s
+            )
+            RETURNING id
+        """, (
+            customer,
+            game,
+            file_label,
+            upload_date
+        ))
+
+        file_id = cursor.fetchone()[0]
+
+        print(f"FILE ID = {file_id}")
+
+        # เพิ่มข้อมูลทีละแถว
+        for _, row in df_data.iterrows():
+
+            values = [str(x) for x in row]
+
+            while len(values) < 11:
+                values.append("")
+
+            cursor.execute("""
+                INSERT INTO data_rows
+                (
+                    file_id,
+                    col_A,
+                    col_B,
+                    col_C,
+                    col_D,
+                    col_E,
+                    col_F,
+                    col_G,
+                    col_H,
+                    col_I,
+                    col_J,
+                    col_K
+                )
+                VALUES
+                (
+                    %s,%s,%s,%s,%s,%s,
+                    %s,%s,%s,%s,%s,%s
+                )
+            """, (
+                file_id,
+                values[0],
+                values[1],
+                values[2],
+                values[3],
+                values[4],
+                values[5],
+                values[6],
+                values[7],
+                values[8],
+                values[9],
+                values[10]
+            ))
+
+        conn.commit()
+
+        print("COMMIT OK")
+
+        cursor.close()
+        conn.close()
+
+        print("UPLOAD SUCCESS")
+
+        return render_template("success.html")
 
     except Exception as e:
 
-        print("UPLOAD ERROR:")
+        print("UPLOAD ERROR")
         print(str(e))
 
-        return str(e), 500
-
+        return f"""
+        <h1>UPLOAD FAILED</h1>
+        <pre>{str(e)}</pre>
+        """, 500
 # ---------------------------
 # SEARCH (เวอร์ชันเดิม เสถียร)
 # ---------------------------
