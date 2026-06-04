@@ -100,40 +100,35 @@ def index():
 # ---------------------------
 @app.route("/upload", methods=["POST"])
 def upload():
-    file = request.files["file"]
-    customer = request.form["customer"]
-    game = request.form["game"]
 
-    df = pd.read_excel(file, dtype=str)
-    df_data = df.iloc[:, 0:11].fillna("")
+    try:
 
-    conn = get_db()
-    cursor = conn.cursor()
+        print("UPLOAD START")
 
-    thai_tz = pytz.timezone("Asia/Bangkok")
-    upload_date = datetime.now(thai_tz).strftime("%Y-%m-%d %H:%M:%S")
+        file = request.files["file"]
+        customer = request.form["customer"]
+        game = request.form["game"]
 
-    file_label = f"{customer} > {game} > {upload_date}"
+        print("FILE =", file.filename)
 
-    cursor.execute("""
-        INSERT INTO files (customer, game, file_label, upload_date)
-        VALUES (%s, %s, %s, %s)
-        RETURNING id
-    """, (customer, game, file_label, upload_date))
+        df = pd.read_excel(file, dtype=str)
 
-    file_id = cursor.fetchone()[0]
+        print("EXCEL OK")
 
-    for _, row in df_data.iterrows():
-        cursor.execute("""
-            INSERT INTO data_rows VALUES (
-                DEFAULT,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s
-            )
-        """, (file_id, *[str(x) for x in row]))
+        conn = get_db()
 
-    conn.commit()
-    conn.close()
+        print("DB OK")
 
-    return render_template("success.html")
+        cursor = conn.cursor()
+
+        return "PASS"
+
+    except Exception as e:
+
+        print("UPLOAD ERROR:")
+        print(str(e))
+
+        return str(e), 500
 
 # ---------------------------
 # SEARCH (เวอร์ชันเดิม เสถียร)
