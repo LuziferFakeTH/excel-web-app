@@ -105,7 +105,6 @@ def upload():
     print("========== UPLOAD START ==========")
 
     try:
-        # รับไฟล์
         file = request.files["file"]
         customer = request.form["customer"]
         game = request.form["game"]
@@ -114,7 +113,6 @@ def upload():
         print(f"CUSTOMER = {customer}")
         print(f"GAME = {game}")
 
-        # อ่าน Excel
         df = pd.read_excel(file, dtype=str)
 
         print("EXCEL READ OK")
@@ -123,7 +121,6 @@ def upload():
 
         print(f"ROWS = {len(df_data)}")
 
-        # เชื่อม DB
         conn = get_db()
 
         print("DB CONNECT OK")
@@ -136,11 +133,8 @@ def upload():
             "%Y-%m-%d %H:%M:%S"
         )
 
-        file_label = (
-            f"{customer} > {game} > {upload_date}"
-        )
+        file_label = f"{customer} > {game} > {upload_date}"
 
-        # เพิ่มไฟล์
         cursor.execute("""
             INSERT INTO files
             (
@@ -170,103 +164,77 @@ def upload():
 
         rows_to_insert = []
 
-try:
-    conn = get_db()
-    cursor = conn.cursor()
-    
-for _, row in df_data.iterrows():
+        for _, row in df_data.iterrows():
 
-    values = [str(x) for x in row]
+            values = [str(x) for x in row]
 
-    while len(values) < 11:
-        values.append("")
+            while len(values) < 11:
+                values.append("")
 
-    rows_to_insert.append(
-        (
-            file_id,
-            values[0],
-            values[1],
-            values[2],
-            values[3],
-            values[4],
-            values[5],
-            values[6],
-            values[7],
-            values[8],
-            values[9],
-            values[10]
+            rows_to_insert.append(
+                (
+                    file_id,
+                    values[0],
+                    values[1],
+                    values[2],
+                    values[3],
+                    values[4],
+                    values[5],
+                    values[6],
+                    values[7],
+                    values[8],
+                    values[9],
+                    values[10]
+                )
+            )
+
+        print(f"PREPARED {len(rows_to_insert)} ROWS")
+
+        execute_values(
+            cursor,
+            """
+            INSERT INTO data_rows (
+                file_id,
+                col_A,
+                col_B,
+                col_C,
+                col_D,
+                col_E,
+                col_F,
+                col_G,
+                col_H,
+                col_I,
+                col_J,
+                col_K
+            )
+            VALUES %s
+            """,
+            rows_to_insert,
+            page_size=100
         )
-    )
 
-print(f"PREPARED {len(rows_to_insert)} ROWS")
+        print("INSERT DATA_ROWS DONE")
 
-execute_values(
-    cursor,
-    """
-    INSERT INTO data_rows (
-        file_id,
-        col_A,
-        col_B,
-        col_C,
-        col_D,
-        col_E,
-        col_F,
-        col_G,
-        col_H,
-        col_I,
-        col_J,
-        col_K
-    )
-    VALUES %s
-    """,
-    rows_to_insert,
-    page_size=100
-)
+        conn.commit()
 
-print("INSERT DATA_ROWS DONE")
-# ---------------------------
-# SEARCH (เวอร์ชันเดิม เสถียร)
-# ---------------------------
-@app.route("/search")
-def search():
-    keyword = request.args.get("q", "").strip()
+        cursor.close()
+        conn.close()
 
-    if not keyword:
-        return render_template("index.html", results=[])
+        print("UPLOAD SUCCESS")
 
-    conn = get_db()
-    cursor = conn.cursor()
+        return render_template("success.html")
 
-    cursor.execute("""
-    SELECT 
-        files.id,
-        data_rows.id,
-        files.customer,
-        files.game,
-        files.upload_date,
-        data_rows.col_B
-    FROM data_rows
-    JOIN files ON data_rows.file_id = files.id
-    WHERE 
-        col_A ILIKE %s OR
-        col_B ILIKE %s OR
-        col_C ILIKE %s OR
-        col_D ILIKE %s OR
-        col_E ILIKE %s OR
-        col_F ILIKE %s OR
-        col_G ILIKE %s OR
-        col_H ILIKE %s OR
-        col_I ILIKE %s OR
-        col_J ILIKE %s OR
-        col_K ILIKE %s
-    ORDER BY data_rows.id DESC
-    LIMIT 100
-    """, tuple([f"%{keyword}%"] * 11))
+    except Exception as e:
 
-    results = cursor.fetchall()
-    conn.close()
+        print("UPLOAD ERROR")
+        print(str(e))
 
-    return render_template("index.html", results=results)
+        try:
+            conn.rollback()
+        except:
+            pass
+
+        return str(e), 500
 
 # ---------------------------
 # FILE LIST
