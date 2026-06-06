@@ -4,6 +4,7 @@ import psycopg2
 import os
 from datetime import datetime
 import pytz
+from psycopg2.extras import execute_values
 
 app = Flask(__name__)
 def get_storage_info():
@@ -167,70 +168,58 @@ def upload():
 
         print(f"FILE ID = {file_id}")
 
-        # เพิ่มข้อมูลทีละแถว
-        for _, row in df_data.iterrows():
+        rows_to_insert = []
 
-            values = [str(x) for x in row]
+for _, row in df_data.iterrows():
 
-            while len(values) < 11:
-                values.append("")
+    values = [str(x) for x in row]
 
-            cursor.execute("""
-                INSERT INTO data_rows
-                (
-                    file_id,
-                    col_A,
-                    col_B,
-                    col_C,
-                    col_D,
-                    col_E,
-                    col_F,
-                    col_G,
-                    col_H,
-                    col_I,
-                    col_J,
-                    col_K
-                )
-                VALUES
-                (
-                    %s,%s,%s,%s,%s,%s,
-                    %s,%s,%s,%s,%s,%s
-                )
-            """, (
-                file_id,
-                values[0],
-                values[1],
-                values[2],
-                values[3],
-                values[4],
-                values[5],
-                values[6],
-                values[7],
-                values[8],
-                values[9],
-                values[10]
-            ))
+    while len(values) < 11:
+        values.append("")
 
-        conn.commit()
+    rows_to_insert.append(
+        (
+            file_id,
+            values[0],
+            values[1],
+            values[2],
+            values[3],
+            values[4],
+            values[5],
+            values[6],
+            values[7],
+            values[8],
+            values[9],
+            values[10]
+        )
+    )
 
-        print("COMMIT OK")
+print(f"PREPARED {len(rows_to_insert)} ROWS")
 
-        cursor.close()
-        conn.close()
+execute_values(
+    cursor,
+    """
+    INSERT INTO data_rows (
+        file_id,
+        col_A,
+        col_B,
+        col_C,
+        col_D,
+        col_E,
+        col_F,
+        col_G,
+        col_H,
+        col_I,
+        col_J,
+        col_K
+    )
+    VALUES %s
+    """,
+    rows_to_insert,
+    page_size=100
+)
 
-        print("UPLOAD SUCCESS")
-
-        return render_template("success.html")
-
-    except Exception as e:
-
-        print("UPLOAD ERROR")
-        print(str(e))
-
-        return f"""
-        <h1>UPLOAD FAILED</h1>
-        <pre>{str(e)}</pre>
-        """, 500
+print("INSERT DATA_ROWS DONE")
 # ---------------------------
 # SEARCH (เวอร์ชันเดิม เสถียร)
 # ---------------------------
