@@ -170,6 +170,10 @@ def upload():
 
         rows_to_insert = []
 
+try:
+    conn = get_db()
+    cursor = conn.cursor()
+    
 for _, row in df_data.iterrows():
 
     values = [str(x) for x in row]
